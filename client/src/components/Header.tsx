@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
-import { AiOutlineSearch } from 'react-icons/ai'
+import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai'
 import { useState } from 'react'
 
 interface LinkItemProps {
@@ -20,6 +20,8 @@ const LinkItem = ({ title, link }: LinkItemProps) => (
 
 const Header = () => {
 	const [searchTerm, setSearchTerm] = useState('')
+	const [navIsOpen, setNavIsOpen] = useState(false)
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setSearchTerm('')
@@ -57,7 +59,7 @@ const Header = () => {
 					</div>
 				</form>
 
-				{/* Navigation */}
+				{/* Navigation - Large Screen */}
 				<div className='flex items-center justify-end'>
 					<nav aria-label='Global' className='hidden md:block'>
 						<ul className='flex items-center gap-6 text-sm'>
@@ -68,10 +70,24 @@ const Header = () => {
 					</nav>
 				</div>
 
+				{/* Navigation - Mobile Screen */}
+				<div
+					className={`w-[200px] md:hidden absolute top-[60px] right-4 rounded-xl z-10 shadow-secondary py-4 ${
+						!navIsOpen ? '-translate-y-[100vh]' : 'translate-y-0'
+					} transition-all duration-500`}>
+					<ul className='rounded-xl p-4 bg-white dark:bg-gray-900 shadow-xl flex flex-col gap-2 items-center'>
+						<LinkItem title='Home' link='/' />
+						<LinkItem title='About' link='/about' />
+						<LinkItem title='SignIn' link='/sign-in' />
+					</ul>
+				</div>
+
 				{/* Menu Toggle Button*/}
-				<button className='block rounded bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75 md:hidden'>
+				<button
+					onClick={() => setNavIsOpen((prev) => !prev)}
+					className='block rounded bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75 md:hidden'>
 					<span className='sr-only'>Toggle menu</span>
-					<GiHamburgerMenu />
+					{navIsOpen ? <AiOutlineClose /> : <GiHamburgerMenu />}
 				</button>
 			</div>
 		</header>
