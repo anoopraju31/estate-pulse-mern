@@ -1,19 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { InputField } from '../components'
 import { Link } from 'react-router-dom'
+import { checkForm } from '../utils'
 
-interface FormData {
+interface SignUpFormData {
 	username: string
 	email: string
 	password: string
 }
 
 const SignUpPage = () => {
-	const [form, setForm] = useState<FormData>({
+	const [form, setForm] = useState<SignUpFormData>({
 		username: '',
 		email: '',
 		password: '',
 	})
+	const [isDisabled, setIsDisabled] = useState(false)
+
+	useEffect(() => {
+		setIsDisabled(
+			!(
+				checkForm('username', form.username) &&
+				checkForm('email', form.email) &&
+				checkForm('password', form.password)
+			),
+		)
+	}, [form])
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
@@ -61,7 +73,9 @@ const SignUpPage = () => {
 						handleChange={(e) => handleChange(e, 'password')}
 					/>
 
-					<button className='w-full my-2 py-3 px-6 bg-green-500 rounded-lg text-center uppercase text-white'>
+					<button
+						disabled={isDisabled}
+						className='w-full my-2 py-3 px-6 bg-green-500 disabled:bg-green-500/60 rounded-lg text-center uppercase text-white'>
 						Sign Up
 					</button>
 
