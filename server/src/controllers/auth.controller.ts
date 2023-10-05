@@ -1,4 +1,4 @@
-import express from 'express'
+import { Request, Response, NextFunction } from 'express'
 import bcryptjs from 'bcryptjs'
 import User from '../models/User.model'
 
@@ -9,8 +9,9 @@ const passwordRegex =
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
 export const signUpController = async (
-	req: express.Request,
-	res: express.Response,
+	req: Request,
+	res: Response,
+	next: NextFunction,
 ) => {
 	try {
 		const { username, email, password } = req.body
@@ -62,6 +63,7 @@ export const signUpController = async (
 		return res.status(201).json({ message: 'User created successfully!' })
 	} catch (error) {
 		//! console.error(error)
-		return res.status(500).json({ message: error.message })
+
+		next(error)
 	}
 }
