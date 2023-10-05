@@ -8,6 +8,12 @@ interface LinkItemProps {
 	link: string
 }
 
+interface SearchFormProps {
+	searchTerm: string
+	handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+	handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+}
+
 const LinkItem = ({ title, link }: LinkItemProps) => (
 	<li>
 		<Link
@@ -18,10 +24,41 @@ const LinkItem = ({ title, link }: LinkItemProps) => (
 	</li>
 )
 
+const SearchForm = ({
+	searchTerm,
+	handleChange,
+	handleSubmit,
+}: SearchFormProps) => (
+	<form onSubmit={handleSubmit}>
+		<label htmlFor='search' className='sr-only'>
+			Search
+		</label>
+		<div className='px-4 flex items-center bg-slate-50 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white '>
+			<span className='block py-2'>
+				<AiOutlineSearch size={22} />
+			</span>
+			<input
+				type='text'
+				name='search'
+				id='search'
+				className='w-full bg-transparent rounded-lg outline-none py-2 px-4 pe-12 text-sm shadow-sm'
+				placeholder='search'
+				value={searchTerm}
+				onChange={handleChange}
+			/>
+		</div>
+	</form>
+)
+
 const Header = () => {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [navIsOpen, setNavIsOpen] = useState(false)
 
+	// Function to handle input change
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+		setSearchTerm(e.target.value)
+
+	// Function handle submit
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
 		setSearchTerm('')
@@ -39,25 +76,13 @@ const Header = () => {
 				</Link>
 
 				{/* Search Bar */}
-				<form onSubmit={handleSubmit} className='hidden sm:block'>
-					<label htmlFor='search' className='sr-only'>
-						Search
-					</label>
-					<div className='px-4 flex items-center bg-slate-50 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white '>
-						<span className='block py-2'>
-							<AiOutlineSearch size={22} />
-						</span>
-						<input
-							type='text'
-							name='search'
-							id='search'
-							className='w-full bg-transparent rounded-lg outline-none py-2 px-4 pe-12 text-sm shadow-sm'
-							placeholder='search'
-							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-						/>
-					</div>
-				</form>
+				<div className='hidden sm:block'>
+					<SearchForm
+						searchTerm={searchTerm}
+						handleChange={handleChange}
+						handleSubmit={handleSubmit}
+					/>
+				</div>
 
 				{/* Navigation - Large Screen */}
 				<div className='flex items-center justify-end'>
@@ -72,14 +97,22 @@ const Header = () => {
 
 				{/* Navigation - Mobile Screen */}
 				<div
-					className={`w-[200px] md:hidden absolute top-[60px] right-4 rounded-xl z-10 shadow-secondary py-4 ${
+					className={`px-4 md:hidden absolute top-[60px] right-0 left-0 rounded-xl z-10 shadow-secondary py-4 ${
 						!navIsOpen ? '-translate-y-[100vh]' : 'translate-y-0'
 					} transition-all duration-500`}>
-					<ul className='rounded-xl p-4 bg-white dark:bg-gray-900 shadow-xl flex flex-col gap-2 items-center'>
-						<LinkItem title='Home' link='/' />
-						<LinkItem title='About' link='/about' />
-						<LinkItem title='SignIn' link='/sign-in' />
-					</ul>
+					<div className='rounded-xl p-4 bg-white dark:bg-gray-900 shadow-xl flex flex-col gap-6'>
+						<SearchForm
+							searchTerm={searchTerm}
+							handleChange={handleChange}
+							handleSubmit={handleSubmit}
+						/>
+
+						<ul className='flex flex-col gap-4 items-center'>
+							<LinkItem title='Home' link='/' />
+							<LinkItem title='About' link='/about' />
+							<LinkItem title='SignIn' link='/sign-in' />
+						</ul>
+					</div>
 				</div>
 
 				{/* Menu Toggle Button*/}
