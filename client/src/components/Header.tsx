@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineSearch } from 'react-icons/ai'
+import { useState } from 'react'
 
 interface LinkItemProps {
 	title: string
@@ -18,6 +19,11 @@ const LinkItem = ({ title, link }: LinkItemProps) => (
 )
 
 const Header = () => {
+	const [searchTerm, setSearchTerm] = useState('')
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+		setSearchTerm('')
+	}
 	return (
 		<header className='bg-white dark:bg-gray-900'>
 			<div className='mx-auto flex h-16 max-w-screen-2xl justify-between items-center gap-8 px-4 sm:px-6 lg:px-8'>
@@ -31,7 +37,7 @@ const Header = () => {
 				</Link>
 
 				{/* Search Bar */}
-				<form className='hidden sm:block'>
+				<form onSubmit={handleSubmit} className='hidden sm:block'>
 					<label htmlFor='search' className='sr-only'>
 						Search
 					</label>
@@ -44,8 +50,9 @@ const Header = () => {
 							name='search'
 							id='search'
 							className='w-full bg-transparent rounded-lg outline-none py-2 px-4 pe-12 text-sm shadow-sm'
-							// className=' focus:outline-none w-24 sm:w-64'
 							placeholder='search'
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
 						/>
 					</div>
 				</form>
