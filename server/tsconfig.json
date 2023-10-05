@@ -1,0 +1,12 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "baseUrl": "src",
+        "outDir": "dis",
+        "sourceMap": false,
+        "noImplicitAny": true
+    },
+    "include": ["src/**/*"]
+}
