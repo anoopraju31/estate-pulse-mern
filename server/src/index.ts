@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route'
 import authRouter from './routes/auth.route'
+import { errorHandler } from 'middleware/errorHandler.middleware'
 
 dotenv.config()
 
@@ -23,6 +24,8 @@ app.use(express.json())
 
 app.use('/api/user', userRouter)
 app.use('/api/auth', authRouter)
+
+app.use(errorHandler)
 
 app.listen(PORT, () => {
 	console.log(`Server started at port ${PORT}.`)
