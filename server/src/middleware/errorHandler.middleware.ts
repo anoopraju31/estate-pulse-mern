@@ -8,5 +8,9 @@ export const errorHandler = (
 	const statusCode = err.status || 500
 	const message = err.message || 'Internal Server Error'
 
-	return res.status(statusCode).json({ message })
+	return res.status(statusCode).json({
+		success: false,
+		statusCode,
+		message,
+	})
 }
