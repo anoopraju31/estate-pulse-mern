@@ -28,7 +28,7 @@ const InputField = ({
 				placeholder={placeholder}
 				value={value}
 				onChange={handleChange}
-				className='w-full p-3 pe-12 bg-transparent border border-gray-500 focus:border-green-500 rounded-lg text-gray-900 dark:text-white text-base shadow-sm outline-none'
+				className='w-full p-3 pe-12 bg-transparent border border-gray-300 dark:border-gray-500  focus:border-green-500 rounded-lg text-gray-900 dark:text-white text-base shadow-sm outline-none'
 			/>
 		</div>
 	)

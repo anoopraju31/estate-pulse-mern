@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { InputField } from '../components'
+import { Link } from 'react-router-dom'
 
 interface FormData {
 	username: string
@@ -60,14 +61,24 @@ const SignUpPage = () => {
 						handleChange={(e) => handleChange(e, 'password')}
 					/>
 
-					<button className='w-full my-2 py-2 px-6 bg-green-500 rounded-lg text-center text-white'>
+					<button className='w-full my-2 py-3 px-6 bg-green-500 rounded-lg text-center uppercase text-white'>
 						Sign Up
 					</button>
 
-					<button className='w-full my-2 py-2 px-6 bg-red-500 rounded-lg text-center text-white'>
+					<button className='w-full my-2 py-3 px-6 bg-red-500 rounded-lg text-center uppercase text-white'>
 						Sign Up With Google
 					</button>
 				</form>
+
+				<div className='px-4'>
+					<p className='text-gray-900 dark:text-white text-center'>
+						already have an account?
+						<Link to='/sign-in' className='text-red-500 hover:text-red-500/70'>
+							{' '}
+							Sign In{' '}
+						</Link>
+					</p>
+				</div>
 			</div>
 		</main>
 	)
