@@ -18,7 +18,7 @@ const LinkItem = ({ title, link }: LinkItemProps) => (
 	<li>
 		<Link
 			to={link}
-			className='text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75'>
+			className='text-gray-500 transition font-medium hover:text-gray-500/75 dark:text-white dark:hover:text-white/75'>
 			{title}
 		</Link>
 	</li>
@@ -33,7 +33,7 @@ const SearchForm = ({
 		<label htmlFor='search' className='sr-only'>
 			Search
 		</label>
-		<div className='px-4 flex items-center bg-slate-50 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white '>
+		<div className='px-4 flex items-center bg-slate-200 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white'>
 			<span className='block py-2'>
 				<AiOutlineSearch size={22} />
 			</span>
