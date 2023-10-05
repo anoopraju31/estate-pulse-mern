@@ -33,7 +33,7 @@ const SearchForm = ({
 		<label htmlFor='search' className='sr-only'>
 			Search
 		</label>
-		<div className='px-4 flex items-center bg-slate-200 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white'>
+		<div className='px-4 flex items-center bg-gray-200 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white'>
 			<span className='block py-2'>
 				<AiOutlineSearch size={22} />
 			</span>
@@ -64,7 +64,7 @@ const Header = () => {
 		setSearchTerm('')
 	}
 	return (
-		<header className='bg-white dark:bg-gray-900'>
+		<header className='bg-gray-100 dark:bg-gray-900'>
 			<div className='mx-auto flex h-16 max-w-screen-2xl justify-between items-center gap-8 px-4 sm:px-6 lg:px-8'>
 				{/* Logo */}
 				<Link to='/'>
@@ -97,15 +97,17 @@ const Header = () => {
 
 				{/* Navigation - Mobile Screen */}
 				<div
-					className={`px-4 md:hidden absolute top-[60px] right-0 left-0 rounded-xl z-10 shadow-secondary py-4 ${
+					className={`px-4 md:hidden absolute top-[60px] right-0 left-0 rounded-xl z-10 py-4 ${
 						!navIsOpen ? '-translate-y-[100vh]' : 'translate-y-0'
-					} transition-all duration-500`}>
-					<div className='rounded-xl p-4 bg-white dark:bg-gray-900 shadow-xl flex flex-col gap-6'>
-						<SearchForm
-							searchTerm={searchTerm}
-							handleChange={handleChange}
-							handleSubmit={handleSubmit}
-						/>
+					} transition-all duration-500 backdrop-blur-xl`}>
+					<div className='rounded-xl p-4 bg-white/5 dark:bg-gray-900/5 shadow-xl flex flex-col gap-6'>
+						<div className='sm:hidden'>
+							<SearchForm
+								searchTerm={searchTerm}
+								handleChange={handleChange}
+								handleSubmit={handleSubmit}
+							/>
+						</div>
 
 						<ul className='flex flex-col gap-4 items-center'>
 							<LinkItem title='Home' link='/' />
@@ -118,7 +120,7 @@ const Header = () => {
 				{/* Menu Toggle Button*/}
 				<button
 					onClick={() => setNavIsOpen((prev) => !prev)}
-					className='block rounded bg-gray-100 p-2.5 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75 md:hidden'>
+					className='block rounded bg-gray-200 p-2.5 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75 md:hidden'>
 					<span className='sr-only'>Toggle menu</span>
 					{navIsOpen ? <AiOutlineClose /> : <GiHamburgerMenu />}
 				</button>

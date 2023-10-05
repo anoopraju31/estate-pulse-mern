@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import userRouter from './routes/user.route'
 import authRouter from './routes/auth.route'
-import { errorHandler } from './middleware/errorHandler.middleware'
+import { errorHandler } from './middlewares/errorHandler.middleware'
 
 dotenv.config()
 
