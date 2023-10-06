@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import bcryptjs from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 import User from '../models/User.model'
+import { errorHandler } from '../utills/error'
 
 // * regex patterns
 const usernameRegex = /^[A-Za-z]+( [A-Za-z]+)?$/
@@ -17,42 +19,30 @@ export const signUpController = async (
 		const { username, email, password } = req.body
 
 		// * validation - check for all fields are present or not
-		if (!username || !email || !password) {
-			res.status(400).json({
+		if (!username || !email || !password)
+			return res.status(400).json({
 				error: 'please fill all fields',
 			})
 
-			return
-		}
-
 		// * validation - check for valid username
-		if (!usernameRegex.test(username)) {
-			res.status(400).json({
+		if (!usernameRegex.test(username))
+			return res.status(400).json({
 				error:
 					'Invalid username. Usernames can only contain alphabetic characters (A-Z, a-z).',
 			})
 
-			return
-		}
-
 		// * validation - check for invaild email
-		if (!emailPattern.test(email)) {
-			res.status(400).json({
+		if (!emailPattern.test(email))
+			return res.status(400).json({
 				error: 'Invalid email address. Please enter a valid email.',
 			})
 
-			return
-		}
-
 		// * validation - check for password
-		if (!passwordRegex.test(password) && password.length < 8) {
-			res.status(400).json({
+		if (!passwordRegex.test(password) && password.length < 8)
+			return res.status(400).json({
 				error:
 					'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.',
 			})
-
-			return
-		}
 
 		// ? hashing password
 		const hashedPassword = await bcryptjs.hash(password, 12)
@@ -60,16 +50,62 @@ export const signUpController = async (
 
 		await newUser.save()
 
-		return res
-			.status(201)
-			.json({
-				success: true,
-				statusCode: 201,
-				message: 'User created successfully!',
-			})
+		return res.status(201).json({
+			success: true,
+			statusCode: 201,
+			message: 'User created successfully!',
+		})
 	} catch (error) {
 		//! console.error(error)
+		next(error)
+	}
+}
 
+export const signInController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { email, password } = req.body
+
+		// * validation - check for all fields are present or not
+		if (!email || !password)
+			return res.status(400).json({
+				error: 'please fill all fields',
+			})
+
+		// * validation - check for invaild email
+		if (!emailPattern.test(email))
+			return res.status(400).json({
+				error: 'Invalid email address. Please enter a valid email.',
+			})
+
+		// Check for a valid user
+		const validUser = await User.findOne({ email })
+
+		console.log(validUser)
+
+		// if invalid user
+		if (!validUser) return next(errorHandler(404, 'User not found!'))
+
+		// validate password
+		const validPassword = bcryptjs.compareSync(password, validUser.password)
+
+		// if invalid password
+		if (!validPassword) return next(errorHandler(401, 'Invalid password'))
+
+		const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET)
+
+		res.cookie('access_token', token, { httpOnly: true }).status(200).json({
+			id: validUser.id,
+			username: validUser.username,
+			email: validUser.email,
+			createdAt: validUser.createdAt,
+			updatedAt: validUser.updatedAt,
+		})
+	} catch (error) {
+		//! console.error(error)
 		next(error)
 	}
 }
