@@ -45,7 +45,7 @@ export const signUpController = async (
 		}
 
 		// * validation - check for password
-		if (!passwordRegex.test(password)) {
+		if (!passwordRegex.test(password) && password.length < 8) {
 			res.status(400).json({
 				error:
 					'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character.',
@@ -60,7 +60,13 @@ export const signUpController = async (
 
 		await newUser.save()
 
-		return res.status(201).json({ message: 'User created successfully!' })
+		return res
+			.status(201)
+			.json({
+				success: true,
+				statusCode: 201,
+				message: 'User created successfully!',
+			})
 	} catch (error) {
 		//! console.error(error)
 
