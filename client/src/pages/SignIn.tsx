@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
-import { InputField } from '../components'
+import { GoogleAuth, InputField } from '../components'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
 	signInFailure,
@@ -111,9 +111,7 @@ const SignInPage = () => {
 					</button>
 
 					{/* Google Sign Up Button */}
-					<button className='w-full my-2 py-3 px-6 bg-red-500 rounded-lg text-center uppercase text-white'>
-						Sign In With Google
-					</button>
+					<GoogleAuth />
 				</form>
 
 				{/* Link to Sign In Page */}
