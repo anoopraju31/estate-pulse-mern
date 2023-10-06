@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { InputField } from '../components'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { checkForm } from '../utils'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -18,6 +18,7 @@ const SignUpPage = () => {
 	})
 	const [isDisabled, setIsDisabled] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		setIsDisabled(
@@ -55,8 +56,9 @@ const SignUpPage = () => {
 				password: '',
 			})
 
-			if (data.success) toast.success(data.message)
-			else toast.error(data.message)
+			if (data.success) {
+				navigate('/sign-in')
+			} else toast.error(data.message)
 		} catch (error) {
 			console.log(error)
 
