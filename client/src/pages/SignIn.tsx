@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
-import { InputField } from '../components'
 import { Link, useNavigate } from 'react-router-dom'
-import { checkForm } from '../utils'
 import toast, { Toaster } from 'react-hot-toast'
+import { InputField } from '../components'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
+import {
+	signInFailure,
+	signInStart,
+	signInSuccess,
+} from '../reducers/userSlice'
+import { checkForm } from '../utils'
 
 interface SignUpFormData {
 	email: string
@@ -15,7 +21,8 @@ const SignInPage = () => {
 		password: '',
 	})
 	const [isDisabled, setIsDisabled] = useState(false)
-	const [isLoading, setIsLoading] = useState(false)
+	const isLoading = useAppSelector((state) => state.user.loading)
+	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
 
 	useEffect(() => {
@@ -32,7 +39,7 @@ const SignInPage = () => {
 		e.preventDefault()
 
 		try {
-			setIsLoading(true)
+			dispatch(signInStart())
 
 			const res = await fetch('/api/auth/sign-in', {
 				method: 'POST',
@@ -44,19 +51,25 @@ const SignInPage = () => {
 			const data = await res.json()
 			console.log(data)
 
+			// Clear Form
 			setForm({
 				email: '',
 				password: '',
 			})
 
 			if (data.success) {
+				dispatch(signInSuccess(data))
 				navigate('/')
-			} else toast.error(data.message)
+			} else {
+				dispatch(signInFailure(data.message))
+				toast.error(data.message)
+			}
 		} catch (error) {
 			console.log(error)
-			if (error instanceof Error) toast.error(error?.message)
-		} finally {
-			setIsLoading(false)
+			if (error instanceof Error) {
+				dispatch(signInFailure(error?.message))
+				toast.error(error?.message)
+			}
 		}
 	}
 
