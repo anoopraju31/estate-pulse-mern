@@ -84,8 +84,6 @@ export const signInController = async (
 		// Check for a valid user
 		const validUser = await User.findOne({ email })
 
-		console.log(validUser)
-
 		// if invalid user
 		if (!validUser) return next(errorHandler(404, 'User not found!'))
 
@@ -98,6 +96,7 @@ export const signInController = async (
 		const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET)
 
 		res.cookie('access_token', token, { httpOnly: true }).status(200).json({
+			success: true,
 			id: validUser.id,
 			username: validUser.username,
 			email: validUser.email,
