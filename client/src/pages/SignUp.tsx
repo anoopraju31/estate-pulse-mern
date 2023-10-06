@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { InputField } from '../components'
 import { Link } from 'react-router-dom'
 import { checkForm } from '../utils'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface SignUpFormData {
 	username: string
@@ -16,6 +17,7 @@ const SignUpPage = () => {
 		password: '',
 	})
 	const [isDisabled, setIsDisabled] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
 		setIsDisabled(
@@ -27,11 +29,41 @@ const SignUpPage = () => {
 		)
 	}, [form])
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement>,
-		field: string,
-	) => {
-		setForm((prev) => ({ ...prev, [field]: e.target.value }))
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }))
+	}
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+
+		try {
+			setIsLoading(true)
+
+			const res = await fetch('/api/auth/sign-up', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(form),
+			})
+			const data = await res.json()
+			console.log(data)
+
+			setForm({
+				username: '',
+				email: '',
+				password: '',
+			})
+
+			if (data.success) toast.success(data.message)
+			else toast.error(data.message)
+		} catch (error) {
+			console.log(error)
+
+			toast.error((error as Error)?.message)
+		} finally {
+			setIsLoading(false)
+		}
 	}
 
 	return (
@@ -42,7 +74,8 @@ const SignUpPage = () => {
 					Sign Up{' '}
 				</h1>
 
-				<form className='w-full max-w-md mx-auto my-8'>
+				{/* Sign Up Form */}
+				<form className='w-full max-w-md mx-auto my-8' onSubmit={handleSubmit}>
 					{/* username input */}
 					<InputField
 						label='Username'
@@ -50,7 +83,7 @@ const SignUpPage = () => {
 						type='text'
 						placeholder='username'
 						value={form.username}
-						handleChange={(e) => handleChange(e, 'username')}
+						handleChange={(e) => handleChange(e)}
 					/>
 
 					{/* email input */}
@@ -60,7 +93,7 @@ const SignUpPage = () => {
 						type='email'
 						placeholder='email'
 						value={form.email}
-						handleChange={(e) => handleChange(e, 'email')}
+						handleChange={(e) => handleChange(e)}
 					/>
 
 					{/* password input */}
@@ -70,20 +103,23 @@ const SignUpPage = () => {
 						type='password'
 						placeholder='password'
 						value={form.password}
-						handleChange={(e) => handleChange(e, 'password')}
+						handleChange={(e) => handleChange(e)}
 					/>
 
+					{/* Submit Button */}
 					<button
 						disabled={isDisabled}
 						className='w-full my-2 py-3 px-6 bg-green-500 disabled:bg-green-500/60 rounded-lg text-center uppercase text-white'>
-						Sign Up
+						{isLoading ? 'Loading ...' : 'Sign Up'}
 					</button>
 
+					{/* Google Sign Up Button */}
 					<button className='w-full my-2 py-3 px-6 bg-red-500 rounded-lg text-center uppercase text-white'>
 						Sign Up With Google
 					</button>
 				</form>
 
+				{/* Link to Sign In Page */}
 				<div className='px-4'>
 					<p className='text-gray-900 dark:text-white text-center'>
 						already have an account?
@@ -93,6 +129,8 @@ const SignUpPage = () => {
 						</Link>
 					</p>
 				</div>
+
+				<Toaster position='top-center' />
 			</div>
 		</main>
 	)
