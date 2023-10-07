@@ -1,19 +1,22 @@
+import { useState } from 'react'
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch } from '../app/hooks'
-import { signInSuccess } from '../reducers/userSlice'
+import { signInFailure, signInSuccess } from '../reducers/userSlice'
 import { app } from '../firebase'
+import toast from 'react-hot-toast'
 
 const GoogleAuth = () => {
+	const [isLoading, setIsLoading] = useState(false)
 	const navigate = useNavigate()
 	const dispatch = useAppDispatch()
 
 	const handleClick = async () => {
 		try {
+			setIsLoading(true)
 			const provider = new GoogleAuthProvider()
 			const auth = getAuth(app)
 			const result = await signInWithPopup(auth, provider)
-			console.log(result)
 
 			if (result.user) {
 				const res = await fetch('/api/auth/google', {
@@ -30,12 +33,19 @@ const GoogleAuth = () => {
 
 				const data = await res.json()
 
-				dispatch(signInSuccess(data))
-
-				navigate('/')
+				if (data.success) {
+					dispatch(signInSuccess(data))
+					navigate('/')
+				} else {
+					toast.error(data.message)
+					dispatch(signInFailure(data.message))
+				}
 			}
 		} catch (error) {
 			console.log(error)
+			toast.error((error as Error)?.message)
+		} finally {
+			setIsLoading(false)
 		}
 	}
 
@@ -43,7 +53,8 @@ const GoogleAuth = () => {
 		<button
 			type='button'
 			onClick={handleClick}
-			className='w-full my-2 py-3 px-6 bg-red-700 rounded-lg text-center uppercase text-white'>
+			disabled={isLoading}
+			className='w-full my-2 py-3 px-6 bg-red-700 disabled:bg-red-400 rounded-lg text-center uppercase text-white'>
 			Continue With Google
 		</button>
 	)

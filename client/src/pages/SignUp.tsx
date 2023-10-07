@@ -48,7 +48,7 @@ const SignUpPage = () => {
 				body: JSON.stringify(form),
 			})
 			const data = await res.json()
-			console.log(data)
+			// console.log(data)
 
 			setForm({
 				username: '',

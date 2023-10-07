@@ -7,6 +7,7 @@ import {
 	SignUpPage,
 } from './pages'
 import { Header } from './components'
+import { Toaster } from 'react-hot-toast'
 
 const App = () => {
 	return (
@@ -22,6 +23,8 @@ const App = () => {
 				<Route path='/about' element={<AboutPage />} />
 				<Route path='/profile' element={<ProfilePage />} />
 			</Routes>
+
+			<Toaster position='top-center' />
 
 			{/* Footer */}
 		</BrowserRouter>
