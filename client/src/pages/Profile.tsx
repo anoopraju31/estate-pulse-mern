@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAppSelector } from '../app/hooks'
 
 const ProfilePage = () => {
@@ -32,20 +33,21 @@ const ProfilePage = () => {
 					{/* Buttons */}
 					<div className='flex flex-wrap justify-center items-center gap-4'>
 						{/* Edit */}
-						<button
-							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'
-							type='button'>
+						<Link
+							to='/edit-profile'
+							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'>
 							{' '}
 							Edit profile{' '}
-						</button>
+						</Link>
 
 						{/* Create Listing */}
-						<button
+						<Link
+							to='/create-listing'
 							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'
 							type='button'>
 							{' '}
 							Create listing{' '}
-						</button>
+						</Link>
 
 						{/* Sign Out */}
 						<button
