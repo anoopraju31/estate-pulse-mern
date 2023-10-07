@@ -97,7 +97,7 @@ export const signInController = async (
 
 		res.cookie('access_token', token, { httpOnly: true }).status(200).json({
 			success: true,
-			id: validUser.id,
+			id: validUser._id,
 			username: validUser.username,
 			email: validUser.email,
 			createdAt: validUser.createdAt,
@@ -106,5 +106,70 @@ export const signInController = async (
 	} catch (error) {
 		//! console.error(error)
 		next(error)
+	}
+}
+
+export const googleSignInController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		// const user = await User.findOne({ email: req.body.email })
+
+		// if (user) {
+		// 	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+
+		// 	res.cookie('access_token', token, { httpOnly: true }).status(200).json({
+		// 		success: true,
+		// 		id: user._id,
+		// 		username: user.username,
+		// 		email: user.email,
+		// 		createdAt: user.createdAt,
+		// 		updatedAt: user.updatedAt,
+		// 	})
+		// } else {
+		// 	const generatePassword = Math.random().toString(36).slice(-8)
+		// 	const hashedPassword = bcryptjs.hashSync(generatePassword, 10)
+		// 	const newUser = new User({
+		// 		username:
+		// 			req.body.name.split(' ').join('').toLowerCase() +
+		// 			Math.random().toString(36).slice(-8),
+		// 		email: req.body.email,
+		// 		password: hashedPassword,
+		// 		avatar: req.body.photoUrl,
+		// 	})
+
+		// 	newUser.save()
+		// }
+
+		let user = await User.findOne({ email: req.body.email })
+
+		if (!user) {
+			const generatePassword = Math.random().toString(36).slice(-8)
+			const hashedPassword = bcryptjs.hashSync(generatePassword, 10)
+			const user = new User({
+				username:
+					req.body.name.split(' ').join('').toLowerCase() +
+					Math.random().toString(36).slice(-8),
+				email: req.body.email,
+				password: hashedPassword,
+				avatar: req.body.photoUrl,
+			})
+
+			await user.save()
+		}
+
+		const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+		res.cookie('access_token', token, { httpOnly: true }).status(200).json({
+			success: true,
+			id: user._id,
+			username: user.username,
+			email: user.email,
+			createdAt: user.createdAt,
+			updatedAt: user.updatedAt,
+		})
+	} catch (error) {
+		console.log(error)
 	}
 }
