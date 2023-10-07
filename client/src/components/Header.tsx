@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai'
 import { useState } from 'react'
+import { useAppSelector } from '../app/hooks'
 
 interface LinkItemProps {
-	title: string
+	title?: string
 	link: string
+	imgUrl?: string
 }
 
 interface SearchFormProps {
@@ -14,12 +16,20 @@ interface SearchFormProps {
 	handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
-const LinkItem = ({ title, link }: LinkItemProps) => (
+const LinkItem = ({ title, link, imgUrl }: LinkItemProps) => (
 	<li>
 		<Link
 			to={link}
 			className='text-gray-500 transition font-medium hover:text-gray-500/75 dark:text-white dark:hover:text-white/75'>
-			{title}
+			{imgUrl ? (
+				<img
+					src={imgUrl}
+					alt='user profile'
+					className='w-8 h-8 rounded-full object-cover '
+				/>
+			) : (
+				<span> {title} </span>
+			)}
 		</Link>
 	</li>
 )
@@ -53,6 +63,7 @@ const SearchForm = ({
 const Header = () => {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [navIsOpen, setNavIsOpen] = useState(false)
+	const { currentUser } = useAppSelector((state) => state.user)
 
 	// Function to handle input change
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -90,7 +101,11 @@ const Header = () => {
 						<ul className='flex items-center gap-6 text-sm'>
 							<LinkItem title='Home' link='/' />
 							<LinkItem title='About' link='/about' />
-							<LinkItem title='SignIn' link='/sign-in' />
+							{currentUser !== null ? (
+								<LinkItem imgUrl={currentUser.avatar} link='/profile' />
+							) : (
+								<LinkItem title='SignIn' link='/sign-in' />
+							)}
 						</ul>
 					</nav>
 				</div>
@@ -112,7 +127,11 @@ const Header = () => {
 						<ul className='flex flex-col gap-4 items-center'>
 							<LinkItem title='Home' link='/' />
 							<LinkItem title='About' link='/about' />
-							<LinkItem title='SignIn' link='/sign-in' />
+							{currentUser !== null ? (
+								<LinkItem title='Profile' link='/profile' />
+							) : (
+								<LinkItem title='SignIn' link='/sign-in' />
+							)}
 						</ul>
 					</div>
 				</div>
