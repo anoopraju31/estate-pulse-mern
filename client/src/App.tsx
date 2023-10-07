@@ -6,7 +6,7 @@ import {
 	SignInPage,
 	SignUpPage,
 } from './pages'
-import { Header } from './components'
+import { Header, PrivateRoute } from './components'
 import { Toaster } from 'react-hot-toast'
 
 const App = () => {
@@ -21,7 +21,9 @@ const App = () => {
 				<Route path='/sign-in' element={<SignInPage />} />
 				<Route path='/sign-up' element={<SignUpPage />} />
 				<Route path='/about' element={<AboutPage />} />
-				<Route path='/profile' element={<ProfilePage />} />
+				<Route element={<PrivateRoute />}>
+					<Route path='/profile' element={<ProfilePage />} />
+				</Route>
 			</Routes>
 
 			<Toaster position='top-center' />
