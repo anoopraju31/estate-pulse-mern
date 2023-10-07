@@ -20,7 +20,7 @@ const LinkItem = ({ title, link, imgUrl }: LinkItemProps) => (
 	<li>
 		<Link
 			to={link}
-			className='text-gray-500 transition font-medium hover:text-gray-500/75 dark:text-white dark:hover:text-white/75'>
+			className='text-black transition font-medium hover:text-gray-500/75 dark:text-white dark:hover:text-white/75'>
 			{imgUrl ? (
 				<img
 					src={imgUrl}
@@ -43,7 +43,7 @@ const SearchForm = ({
 		<label htmlFor='search' className='sr-only'>
 			Search
 		</label>
-		<div className='px-4 flex items-center bg-gray-200 dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white'>
+		<div className='px-4 flex items-center bg-white md:bg-gray-300 dark:bg-gray-600 md:dark:bg-gray-600 rounded-3xl text-gray-900 dark:text-white'>
 			<span className='block py-2'>
 				<AiOutlineSearch size={22} />
 			</span>
@@ -75,7 +75,7 @@ const Header = () => {
 		setSearchTerm('')
 	}
 	return (
-		<header className='bg-gray-100 dark:bg-gray-900'>
+		<header className='py-1 bg-gray-100 dark:bg-gray-900'>
 			<div className='mx-auto flex h-16 max-w-screen-2xl justify-between items-center gap-8 px-4 sm:px-6 lg:px-8'>
 				{/* Logo */}
 				<Link to='/'>
@@ -114,8 +114,8 @@ const Header = () => {
 				<div
 					className={`px-4 md:hidden absolute top-[60px] right-0 left-0 rounded-xl z-10 py-4 ${
 						!navIsOpen ? '-translate-y-[100vh]' : 'translate-y-0'
-					} transition-all duration-500 backdrop-blur-xl`}>
-					<div className='rounded-xl p-4 bg-white/5 dark:bg-gray-900/5 shadow-xl flex flex-col gap-6'>
+					} transition-all duration-500 `}>
+					<div className='rounded-xl p-4 bg-gray-900/10 dark:bg-white/5 shadow-xl flex flex-col gap-6 backdrop-blur-xl'>
 						<div className='sm:hidden'>
 							<SearchForm
 								searchTerm={searchTerm}
