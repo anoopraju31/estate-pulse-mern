@@ -100,6 +100,7 @@ export const signInController = async (
 			id: validUser._id,
 			username: validUser.username,
 			email: validUser.email,
+			avatar: validUser.avatar,
 			createdAt: validUser.createdAt,
 			updatedAt: validUser.updatedAt,
 		})
@@ -115,46 +116,21 @@ export const googleSignInController = async (
 	next: NextFunction,
 ) => {
 	try {
-		// const user = await User.findOne({ email: req.body.email })
-
-		// if (user) {
-		// 	const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
-
-		// 	res.cookie('access_token', token, { httpOnly: true }).status(200).json({
-		// 		success: true,
-		// 		id: user._id,
-		// 		username: user.username,
-		// 		email: user.email,
-		// 		createdAt: user.createdAt,
-		// 		updatedAt: user.updatedAt,
-		// 	})
-		// } else {
-		// 	const generatePassword = Math.random().toString(36).slice(-8)
-		// 	const hashedPassword = bcryptjs.hashSync(generatePassword, 10)
-		// 	const newUser = new User({
-		// 		username:
-		// 			req.body.name.split(' ').join('').toLowerCase() +
-		// 			Math.random().toString(36).slice(-8),
-		// 		email: req.body.email,
-		// 		password: hashedPassword,
-		// 		avatar: req.body.photoUrl,
-		// 	})
-
-		// 	newUser.save()
-		// }
-
 		let user = await User.findOne({ email: req.body.email })
 
+		console.log(user)
+
 		if (!user) {
+			console.log('helloworld')
 			const generatePassword = Math.random().toString(36).slice(-8)
 			const hashedPassword = bcryptjs.hashSync(generatePassword, 10)
-			const user = new User({
+			user = new User({
 				username:
 					req.body.name.split(' ').join('').toLowerCase() +
-					Math.random().toString(36).slice(-8),
+					Math.random().toString(36).slice(-4),
 				email: req.body.email,
 				password: hashedPassword,
-				avatar: req.body.photoUrl,
+				avatar: req.body.photo,
 			})
 
 			await user.save()
@@ -168,8 +144,10 @@ export const googleSignInController = async (
 			email: user.email,
 			createdAt: user.createdAt,
 			updatedAt: user.updatedAt,
+			avatar: user.avatar,
 		})
 	} catch (error) {
-		console.log(error)
+		// console.log(error)
+		next(error)
 	}
 }
