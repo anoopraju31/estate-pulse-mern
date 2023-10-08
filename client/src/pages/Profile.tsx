@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { getAuth, signOut } from 'firebase/auth'
+import { AiFillHome } from 'react-icons/ai'
+import { IoIosArrowForward } from 'react-icons/io'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
 	deleteUserFailure,
@@ -97,7 +99,28 @@ const ProfilePage = () => {
 
 	return (
 		<main className='bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white'>
+			{/* Breadcrumb */}
 			<div className='max-w-screen-2xl min-h-[var(--container-min-height)] mx-auto py-4 md:py-8 px-4 sm:px-6 lg:px-8 flex flex-col'>
+				<nav className='my-4 flex' aria-label='Breadcrumb'>
+					<ol className='inline-flex items-center space-x-1 md:space-x-3'>
+						<li className='inline-flex items-center'>
+							<Link
+								to='/'
+								className='inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'>
+								<AiFillHome />
+								Home
+							</Link>
+						</li>
+						<li aria-current='page'>
+							<div className='flex items-center text-gray-500 md:ml-2 dark:text-gray-400'>
+								<IoIosArrowForward />
+								<span className='ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400'>
+									Profile
+								</span>
+							</div>
+						</li>
+					</ol>
+				</nav>
 				{/* Heading */}
 				<h1 className='mb-4 md:mb-8 text-3xl text-center font-semibold'>
 					Profile
@@ -126,7 +149,7 @@ const ProfilePage = () => {
 					<div className='flex flex-wrap justify-center items-center gap-4'>
 						{/* Edit */}
 						<Link
-							to='/edit-profile'
+							to='/profile/edit'
 							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 text-center rounded-lg font-medium'>
 							{' '}
 							Edit profile{' '}
