@@ -1,8 +1,9 @@
 import express from 'express'
-import { test } from '../controllers/user.controller'
+import { test, updateUser } from '../controllers/user.controller'
 
 const router = express.Router()
 
 router.get('/test', test)
+router.post('/update/:id', updateUser)
 
 export default router
