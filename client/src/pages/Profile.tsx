@@ -2,9 +2,13 @@ import { Link } from 'react-router-dom'
 import { getAuth, signOut } from 'firebase/auth'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
+	deleteUserFailure,
+	deleteUserStart,
+	deleteUserSuccess,
 	signOutUserFailure,
 	signOutUserStart,
 	signOutUserSuccess,
+	updateUserFailure,
 } from '../reducers/userSlice'
 import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
@@ -46,7 +50,7 @@ const Model = ({ cancel, proceed }: ModelProps) => (
 
 const ProfilePage = () => {
 	const [isModelOpen, setIsModelOpen] = useState(false)
-	const { currentUser } = useAppSelector((state) => state.user)
+	const { currentUser, loading } = useAppSelector((state) => state.user)
 	const auth = getAuth()
 	const dispatch = useAppDispatch()
 
@@ -67,7 +71,29 @@ const ProfilePage = () => {
 			})
 	}
 
-	const handleDeleteAccount = () => {}
+	const handleDeleteAccount = async () => {
+		try {
+			dispatch(deleteUserStart())
+			setIsModelOpen(false)
+
+			const res = await fetch(`/api/user/delete/${currentUser?.id}`, {
+				method: 'DELETE',
+			})
+			const data = await res.json()
+
+			if (!data?.success) {
+				dispatch(updateUserFailure(data.message))
+				toast.error(data?.message)
+				return
+			}
+
+			dispatch(deleteUserSuccess(data))
+		} catch (error) {
+			dispatch(deleteUserFailure((error as Error)?.message))
+			console.error(error)
+			toast.error((error as Error)?.message)
+		}
+	}
 
 	return (
 		<main className='bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white'>
@@ -128,7 +154,7 @@ const ProfilePage = () => {
 							onClick={() => setIsModelOpen(true)}
 							className='w-full sm:w-fit py-2 px-4 bg-red-600 text-white rounded-lg font-medium'
 							type='button'>
-							Delete
+							{loading ? 'Deleting...' : 'Delete'}
 						</button>
 					</div>
 				</div>
