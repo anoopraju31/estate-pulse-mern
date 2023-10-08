@@ -1,8 +1,31 @@
 import { Link } from 'react-router-dom'
-import { useAppSelector } from '../app/hooks'
+import { getAuth, signOut } from 'firebase/auth'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
+import {
+	signOutUserFailure,
+	signOutUserStart,
+	signOutUserSuccess,
+} from '../reducers/userSlice'
+import toast from 'react-hot-toast'
 
 const ProfilePage = () => {
 	const { currentUser } = useAppSelector((state) => state.user)
+	const auth = getAuth()
+	const dispatch = useAppDispatch()
+
+	const handleSignOut = () => {
+		dispatch(signOutUserStart())
+		signOut(auth)
+			.then(() => {
+				dispatch(signOutUserSuccess())
+				// navigate('/')
+			})
+			.catch((error) => {
+				dispatch(signOutUserFailure(error.message))
+				toast.error(error.message)
+			})
+	}
+
 	return (
 		<main className='bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white'>
 			<div className='max-w-screen-2xl min-h-[var(--container-min-height)] mx-auto py-4 md:py-8 px-4 sm:px-6 lg:px-8 flex flex-col'>
@@ -51,6 +74,7 @@ const ProfilePage = () => {
 
 						{/* Sign Out */}
 						<button
+							onClick={handleSignOut}
 							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'
 							type='button'>
 							SignOut
