@@ -33,9 +33,10 @@ const EditProfilePage = () => {
 		avatar: null,
 	})
 	const [isDisabled, setIsDisabled] = useState(false)
+
 	const [isUploading, setIsUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
-	const { currentUser } = useAppSelector((state) => state.user)
+	const { currentUser, loading } = useAppSelector((state) => state.user)
 	const dispatch = useAppDispatch()
 	const imgUrl =
 		'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
@@ -285,7 +286,7 @@ const EditProfilePage = () => {
 								disabled={isDisabled}
 								type='submit'
 								className='w-full py-3 px-6 bg-green-500 disabled:bg-green-500/60 rounded-lg text-center uppercase text-white font-medium'>
-								Save
+								{loading ? 'Saving...' : 'Save'}
 							</button>
 						</div>
 					</div>
