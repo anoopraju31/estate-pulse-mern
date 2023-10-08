@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react'
 import { AiFillWarning } from 'react-icons/ai'
+import {
+	getDownloadURL,
+	getStorage,
+	ref,
+	uploadBytesResumable,
+} from 'firebase/storage'
 import { InputField } from '../components'
 import { Link } from 'react-router-dom'
 import { checkForm } from '../utils'
+import { app } from '../firebase'
+import toast from 'react-hot-toast'
 
 interface updateFormData {
 	username: string
 	email: string
 	password: string
-	avatar: File | null
+	avatar: File | null | string
 }
 
 const EditProfilePage = () => {
@@ -19,6 +27,10 @@ const EditProfilePage = () => {
 		avatar: null,
 	})
 	const [isDisabled, setIsDisabled] = useState(false)
+	const [isUploading, setIsUploading] = useState(false)
+	const [progress, setProgress] = useState(0)
+	const imgUrl =
+		'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
 
 	useEffect(() => {
 		setIsDisabled(
@@ -31,6 +43,7 @@ const EditProfilePage = () => {
 		)
 	}, [form])
 
+	// Handle input change
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setForm((prev) => ({
 			...prev,
@@ -41,6 +54,7 @@ const EditProfilePage = () => {
 		}))
 	}
 
+	// Clear Form Function
 	const handleClear = () => {
 		setForm({
 			username: '',
@@ -48,6 +62,50 @@ const EditProfilePage = () => {
 			password: '',
 			avatar: null,
 		})
+	}
+
+	// Upload Profile Image
+	const uploadFile = async (file: File) => {
+		const storage = getStorage(app)
+		const fileName = new Date().getTime() + file.name
+		const storageRef = ref(storage, fileName)
+		const uploadTask = uploadBytesResumable(storageRef, file)
+
+		uploadTask.on(
+			'state_changed',
+			(snapshot) => {
+				setProgress(
+					Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
+				)
+			},
+			(error) => {
+				console.error(error)
+				toast.error((error as Error)?.message)
+			},
+			() => {
+				getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+					setIsUploading(false)
+					setForm((prev) => ({ ...prev, avatar: downloadURL }))
+				})
+			},
+		)
+	}
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		try {
+			e.preventDefault()
+			setIsDisabled(true)
+			setIsUploading(true)
+
+			if (typeof form.avatar === 'object' && form.avatar !== null)
+				uploadFile(form.avatar)
+		} catch (error) {
+			console.error(error)
+			toast.error((error as Error)?.message)
+		} finally {
+			setIsDisabled(false)
+			setProgress(0)
+		}
 	}
 
 	return (
@@ -58,7 +116,9 @@ const EditProfilePage = () => {
 					Edit Profile
 				</h1>
 
-				<form className='my-6 flex flex-col md:flex-row md:gap-6'>
+				<form
+					onSubmit={handleSubmit}
+					className='my-6 flex flex-col md:flex-row md:gap-6'>
 					{/* Left - Section */}
 					<div className=' flex flex-col gap-4 items-center'>
 						<h2 className='text-lg font-medium'> Profile Picture </h2>
@@ -67,29 +127,39 @@ const EditProfilePage = () => {
 						<div className='relative group cursor-pointer'>
 							<img
 								src={
-									form.avatar
+									typeof form.avatar === 'object' && form.avatar !== null
 										? window.URL.createObjectURL(form.avatar)
-										: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+										: `${form.avatar || imgUrl}`
 								}
 								alt='profile picture'
 								className='w-36 sm:w-36 md:w-44 lg:w-52 h-36 sm:h-36 md:h-44 lg:h-52 rounded-full object-cover'
 							/>
 
-							<div>
-								<label
-									className='w-36 sm:w-36 md:w-44 lg:w-52 h-36 sm:h-36 md:h-44 lg:h-52 rounded-full cursor-pointer bg-green-500/70 absolute top-0 left-0 right-0 flex items-center invisible group-hover:visible transition-colors ease-in-out duration-500'
-									htmlFor='avatar'>
-									<p className='text-center text-xs'>
+							<div className='absolute top-0 left-0 right-0 w-36 sm:w-36 md:w-44 lg:w-52 h-36 sm:h-36 md:h-44 lg:h-52 rounded-full'>
+								{isUploading ? (
+									// Uploading Percentage
+									<p className='h-full rounded-full cursor-pointer bg-green-500/70 flex justify-center items-center text-center text-xs'>
 										{' '}
-										Change your profile picture.{' '}
+										uploading {progress}%{' '}
 									</p>
-									<input
-										type='file'
-										id='avatar'
-										onChange={(e) => handleChange(e)}
-										className='hidden'
-									/>
-								</label>
+								) : (
+									// File Input
+									<label
+										className='h-full rounded-full cursor-pointer bg-green-500/70 flex justify-center items-center invisible group-hover:visible transition-colors ease-in-out duration-500'
+										htmlFor='avatar'>
+										<p className='text-center text-xs'>
+											{' '}
+											Change your profile picture.{' '}
+										</p>
+										<input
+											type='file'
+											id='avatar'
+											onChange={(e) => handleChange(e)}
+											className='hidden'
+											accept='image/*'
+										/>
+									</label>
+								)}
 							</div>
 						</div>
 
