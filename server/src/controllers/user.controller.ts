@@ -51,3 +51,13 @@ export const updateUser = async (
 		next(error)
 	}
 }
+
+export const deleteUser = async (
+	req: UserRequest,
+	res: Response,
+	next: NextFunction,
+) => {
+	res.json({
+		message: 'Api route is working',
+	})
+}
