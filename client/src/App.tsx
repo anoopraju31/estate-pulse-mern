@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import {
 	AboutPage,
+	EditProfilePage,
 	HomePage,
 	ProfilePage,
 	SignInPage,
@@ -23,6 +24,7 @@ const App = () => {
 				<Route path='/about' element={<AboutPage />} />
 				<Route element={<PrivateRoute />}>
 					<Route path='/profile' element={<ProfilePage />} />
+					<Route path='/edit-profile' element={<EditProfilePage />} />
 				</Route>
 			</Routes>
 
