@@ -2,8 +2,14 @@ import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { errorHandler } from './error'
 
-interface UserRequest extends Request {
-	user: string
+export interface UserRequest extends Request {
+	user: {
+		id: string
+	}
+}
+
+interface User {
+	id: string
 }
 
 export const verifyToken = (
@@ -15,7 +21,7 @@ export const verifyToken = (
 
 	if (!token) return next(errorHandler(401, 'Unauthorized'))
 
-	jwt.verify(token, process.env.JWT_SECRET, (err: Error, user: string) => {
+	jwt.verify(token, process.env.JWT_SECRET, (err: Error, user: User) => {
 		if (err) return next(errorHandler(403, 'Forbidden'))
 
 		req.user = user

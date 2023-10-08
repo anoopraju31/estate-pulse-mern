@@ -45,7 +45,7 @@ export const signUpController = async (
 			})
 
 		// ? hashing password
-		const hashedPassword = await bcryptjs.hash(password, 12)
+		const hashedPassword = await bcryptjs.hash(password, 10)
 		const newUser = new User({ username, email, password: hashedPassword })
 
 		await newUser.save()
