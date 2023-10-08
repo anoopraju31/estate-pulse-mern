@@ -11,6 +11,12 @@ import { Link } from 'react-router-dom'
 import { checkForm } from '../utils'
 import { app } from '../firebase'
 import toast from 'react-hot-toast'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import {
+	updateUserFailure,
+	updateUserStart,
+	updateUserSuccess,
+} from '../reducers/userSlice'
 
 interface updateFormData {
 	username: string
@@ -29,6 +35,8 @@ const EditProfilePage = () => {
 	const [isDisabled, setIsDisabled] = useState(false)
 	const [isUploading, setIsUploading] = useState(false)
 	const [progress, setProgress] = useState(0)
+	const { currentUser } = useAppSelector((state) => state.user)
+	const dispatch = useAppDispatch()
 	const imgUrl =
 		'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
 
@@ -42,6 +50,15 @@ const EditProfilePage = () => {
 			),
 		)
 	}, [form])
+
+	useEffect(() => {
+		setForm({
+			username: currentUser?.username as string,
+			email: currentUser?.email as string,
+			password: '',
+			avatar: currentUser?.avatar || imgUrl,
+		})
+	}, [currentUser])
 
 	// Handle input change
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +77,34 @@ const EditProfilePage = () => {
 			username: '',
 			email: '',
 			password: '',
-			avatar: null,
+			avatar: imgUrl,
 		})
+	}
+
+	const handleUpdate = async (formData: updateFormData) => {
+		try {
+			dispatch(updateUserStart())
+			const res = await fetch(`/api/user/update/${currentUser?.id}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(formData),
+			})
+			const data = await res.json()
+
+			if (!data?.success) {
+				dispatch(updateUserFailure(data.message))
+				toast.error(data?.message)
+				return
+			}
+			dispatch(updateUserSuccess(data))
+			toast.success('User is updated successfully!')
+		} catch (error) {
+			console.error(error)
+			dispatch(updateUserFailure((error as Error)?.message))
+			toast.error((error as Error)?.message)
+		}
 	}
 
 	// Upload Profile Image
@@ -83,10 +126,19 @@ const EditProfilePage = () => {
 				toast.error((error as Error)?.message)
 			},
 			() => {
-				getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-					setIsUploading(false)
-					setForm((prev) => ({ ...prev, avatar: downloadURL }))
-				})
+				getDownloadURL(uploadTask.snapshot.ref)
+					.then((downloadURL) => {
+						setIsUploading(false)
+
+						const updatedForm = form
+						updatedForm.avatar = downloadURL
+						handleUpdate(updatedForm)
+					})
+					.catch((error) => {
+						console.log(error)
+
+						toast.error(error?.message)
+					})
 			},
 		)
 	}
@@ -95,10 +147,13 @@ const EditProfilePage = () => {
 		try {
 			e.preventDefault()
 			setIsDisabled(true)
-			setIsUploading(true)
 
-			if (typeof form.avatar === 'object' && form.avatar !== null)
+			if (typeof form.avatar === 'object' && form.avatar !== null) {
+				setIsUploading(true)
 				uploadFile(form.avatar)
+			} else {
+				handleUpdate(form)
+			}
 		} catch (error) {
 			console.error(error)
 			toast.error((error as Error)?.message)
@@ -129,7 +184,7 @@ const EditProfilePage = () => {
 								src={
 									typeof form.avatar === 'object' && form.avatar !== null
 										? window.URL.createObjectURL(form.avatar)
-										: `${form.avatar || imgUrl}`
+										: `${form.avatar}`
 								}
 								alt='profile picture'
 								className='w-36 sm:w-36 md:w-44 lg:w-52 h-36 sm:h-36 md:h-44 lg:h-52 rounded-full object-cover'
