@@ -63,7 +63,9 @@ const EditProfilePage = () => {
 	}, [currentUser])
 
 	// Handle input change
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => {
 		setForm((prev) => ({
 			...prev,
 			[e.target.id]:
