@@ -157,7 +157,7 @@ const ProfilePage = () => {
 
 						{/* Create Listing */}
 						<Link
-							to='/create-listing'
+							to='/listing/create'
 							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 text-center rounded-lg font-medium'
 							type='button'>
 							{' '}
