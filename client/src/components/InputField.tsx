@@ -1,9 +1,11 @@
 interface InputFieldProps {
+	isLabelVisible?: boolean
 	isTextArea?: boolean
 	label: string
 	name: string
 	type?: string
 	placeholder: string
+	step?: number
 	value: string | number
 	handleChange: (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -11,17 +13,28 @@ interface InputFieldProps {
 }
 
 const InputField = ({
+	isLabelVisible,
 	isTextArea,
 	label,
 	name,
 	type,
 	placeholder,
 	value,
+	step,
 	handleChange,
 }: InputFieldProps) => {
 	return (
-		<div className='my-6'>
-			<label htmlFor={name} className='sr-only'>
+		<div
+			className={
+				isLabelVisible ? 'my-6 flex flex-wrap items-center gap-4' : 'my-6'
+			}>
+			<label
+				htmlFor={name}
+				className={
+					isLabelVisible
+						? 'text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap'
+						: 'sr-only'
+				}>
 				{label}
 			</label>
 
@@ -32,7 +45,7 @@ const InputField = ({
 					placeholder={placeholder}
 					value={value}
 					onChange={handleChange}
-					className='w-full p-3 pe-12 bg-transparent border border-gray-300 dark:border-gray-500  focus:border-green-500 rounded-lg text-gray-900 dark:text-white text-base shadow-sm outline-none'
+					className='w-full p-3 bg-transparent border border-gray-300 dark:border-gray-500  focus:border-green-500 rounded-lg text-gray-900 dark:text-white text-base shadow-sm outline-none'
 					cols={20}
 					rows={10}></textarea>
 			) : (
@@ -40,11 +53,11 @@ const InputField = ({
 					type={type}
 					id={name}
 					name={name}
-					step='1'
+					step={step}
 					placeholder={placeholder}
 					value={value}
 					onChange={handleChange}
-					className='w-full p-3 pe-12 bg-transparent border border-gray-300 dark:border-gray-500  focus:border-green-500 rounded-lg text-gray-900 dark:text-white text-base shadow-sm outline-none'
+					className='w-full p-3 bg-transparent border border-gray-300 dark:border-gray-500  focus:border-green-500 rounded-lg text-gray-900 dark:text-white text-base shadow-sm outline-none'
 				/>
 			)}
 		</div>
