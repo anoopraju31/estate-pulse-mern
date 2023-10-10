@@ -4,6 +4,7 @@ import { AiFillHome } from 'react-icons/ai'
 import { IoIosArrowForward } from 'react-icons/io'
 import { BiCloudUpload } from 'react-icons/bi'
 import { Carousel, Checkbox, InputField } from '../components'
+import { useAppSelector } from '../app/hooks'
 
 export interface ListingForm {
 	name: string
@@ -39,11 +40,26 @@ const CreateListingPage = () => {
 		images: [],
 		userRef: '',
 	})
+	const [isDisabled, setIsDisabled] = useState(false)
+	const { currentUser, loading } = useAppSelector((state) => state.user)
 
 	useEffect(() => {
-		console.log(form)
+		if (currentUser) setForm((prev) => ({ ...prev, userRef: currentUser?.id }))
+	}, [currentUser])
+
+	useEffect(() => {
+		setIsDisabled(
+			// !(
+			// 	checkForm('username', form.username) ||
+			// 	checkForm('email', form.email) ||
+			// 	checkForm('password', form.password) ||
+			// 	form.avatar !== null
+			// ),
+			false,
+		)
 	}, [form])
 
+	// Handle Form Data Change
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) => {
@@ -58,12 +74,37 @@ const CreateListingPage = () => {
 		}))
 	}
 
+	// Function to toggle between Rent & Sale
 	const toggleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
 		setForm((prev) =>
 			e.target.id == 'rent'
 				? { ...prev, rent: e.target.checked, sale: !e.target.checked }
 				: { ...prev, rent: !e.target.checked, sale: e.target.checked },
 		)
+
+	// Clear Form Function
+	const handleClear = () => {
+		setForm({
+			name: '',
+			description: '',
+			address: '',
+			regularPrice: 0,
+			discountPrice: 0,
+			bathrooms: 0,
+			bedrooms: 0,
+			furnished: false,
+			parking: false,
+			sale: true,
+			rent: false,
+			offer: false,
+			images: [],
+			userRef: '',
+		})
+	}
+
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault()
+	}
 
 	return (
 		<main className='bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white'>
@@ -105,9 +146,11 @@ const CreateListingPage = () => {
 					Create Listing
 				</h1>
 
-				<form className='w-full max-w-screen-xl md:my-6 mx-auto flex flex-col-reverse md:flex-row md:gap-6'>
+				<form
+					onSubmit={handleSubmit}
+					className='w-full max-w-screen-xl md:my-6 mx-auto flex flex-col-reverse md:flex-row md:gap-6 relative'>
 					{/* Left Section */}
-					<div className='flex-1 flex flex-col gap-6 items-center'>
+					<div className='h-fit flex-1 flex flex-col gap-6 items-center sticky left-0 right-0 md:top-6 lg:top-8 '>
 						{/* Image Preview */}
 						{form.images.length > 0 && (
 							<Carousel images={form.images} setImages={setForm} />
@@ -137,10 +180,38 @@ const CreateListingPage = () => {
 								className='hidden'
 							/>
 						</label>
+
+						{/* buttons */}
+						<div className='w-full flex flex-col sm:flex-row sm:justify-between gap-4'>
+							{/* Clear Button */}
+							<button
+								disabled={isDisabled}
+								type='reset'
+								onClick={handleClear}
+								className='w-full py-3 px-6 bg-red-500 disabled:bg-red-500/60 rounded-lg text-center uppercase text-white font-medium'>
+								Clear
+							</button>
+
+							{/* Cancel Button */}
+							<Link
+								to='/profile'
+								type='button'
+								className='w-full py-3 px-6 bg-gray-900 dark:bg-white disabled:bg-green-500/60 rounded-lg text-center uppercase text-white dark:text-gray-900 font-medium'>
+								Cancel
+							</Link>
+
+							{/* Save Button */}
+							<button
+								disabled={isDisabled}
+								type='submit'
+								className='w-full py-3 px-6 bg-green-500 disabled:bg-green-500/60 rounded-lg text-center uppercase text-white font-medium'>
+								{loading ? 'Saving...' : 'Save'}
+							</button>
+						</div>
 					</div>
 
 					{/* Right Section */}
-					<div className='flex-1 w-full mx-auto -mt-6'>
+					<div className='flex-1 w-full mx-auto md:-mt-6'>
 						{/* Name */}
 						<InputField
 							isLabelVisible
