@@ -105,9 +105,9 @@ const CreateListingPage = () => {
 					Create Listing
 				</h1>
 
-				<form className='w-full max-w-screen-lg md:my-6 mx-auto flex flex-col-reverse md:flex-row md:gap-6'>
+				<form className='w-full max-w-screen-xl md:my-6 mx-auto flex flex-col-reverse md:flex-row md:gap-6'>
 					{/* Left Section */}
-					<div className='flex-1 flex flex-col gap-4 items-center'>
+					<div className='flex-1 flex flex-col gap-6 items-center'>
 						{/* Image Preview */}
 						{form.images.length > 0 && (
 							<Carousel images={form.images} setImages={setForm} />
