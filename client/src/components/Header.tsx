@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppSelector } from '../app/hooks'
 
 interface LinkItemProps {
@@ -63,7 +63,12 @@ const SearchForm = ({
 const Header = () => {
 	const [searchTerm, setSearchTerm] = useState('')
 	const [navIsOpen, setNavIsOpen] = useState(false)
+	const location = useLocation()
 	const { currentUser } = useAppSelector((state) => state.user)
+
+	useEffect(() => {
+		setNavIsOpen(false)
+	}, [location])
 
 	// Function to handle input change
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
