@@ -118,7 +118,7 @@ export const googleSignInController = async (
 	try {
 		let user = await User.findOne({ email: req.body.email })
 
-		console.log(user)
+		// console.log(user)
 
 		if (!user) {
 			console.log('helloworld')

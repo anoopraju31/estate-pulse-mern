@@ -13,7 +13,7 @@ export const createListing = async (
 
 		const validationResult = validateListing(req.body)
 
-		console.log('validationResult', validationResult)
+		// console.log('validationResult', validationResult)
 
 		if (!validationResult.isValid) {
 			return next(validationResult?.error)
@@ -25,7 +25,7 @@ export const createListing = async (
 			listing,
 		})
 	} catch (error) {
-		console.log(error)
+		// console.log(error)
 
 		next(error)
 	}
