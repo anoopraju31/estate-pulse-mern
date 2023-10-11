@@ -69,3 +69,13 @@ export const deleteUser = async (
 		next(errorHandler(500, error))
 	}
 }
+
+export const getUserListings = async (
+	req: UserRequest,
+	res: Response,
+	next: NextFunction,
+) => {
+	res.json({
+		message: 'Api route is working',
+	})
+}
