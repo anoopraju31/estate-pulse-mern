@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { getAuth, signOut } from 'firebase/auth'
-import { AiFillHome } from 'react-icons/ai'
-import { IoIosArrowForward } from 'react-icons/io'
+// import { AiFillHome } from 'react-icons/ai'
+// import { IoIosArrowForward } from 'react-icons/io'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
 	deleteUserFailure,
@@ -14,7 +14,7 @@ import {
 } from '../reducers/userSlice'
 import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
-import { ListingCard } from '../components'
+import { Breadcrumb, ListingCard } from '../components'
 
 interface ModelProps {
 	cancel: () => void
@@ -142,7 +142,7 @@ const ProfilePage = () => {
 		<main className='bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white'>
 			{/* Breadcrumb */}
 			<div className='max-w-screen-2xl min-h-[var(--container-min-height)] mx-auto py-4 md:py-8 px-4 sm:px-6 lg:px-8 flex flex-col'>
-				<nav className='my-4 flex' aria-label='Breadcrumb'>
+				{/* <nav className='my-4 flex' aria-label='Breadcrumb'>
 					<ol className='inline-flex items-center space-x-1 md:space-x-3'>
 						<li className='inline-flex items-center'>
 							<Link
@@ -161,7 +161,8 @@ const ProfilePage = () => {
 							</div>
 						</li>
 					</ol>
-				</nav>
+				</nav> */}
+				<Breadcrumb />
 
 				{/* profile section */}
 				<section className=''>
@@ -172,11 +173,11 @@ const ProfilePage = () => {
 
 					<div className='flex flex-col items-center gap-6 md:gap-8'>
 						{/* Profile */}
-						<div className=''>
+						<div className='rounded-full border-2 border-gray-600 dark:border-gray-200 '>
 							<img
 								src={currentUser?.avatar}
 								alt={`${currentUser?.username} profile`}
-								className='w-20 md:w-24 h-20 md:h-24 rounded-full aspect-square object-fill'
+								className='w-20 md:w-24 lg:w-32 h-20 md:h-24 lg:h-32 rounded-full aspect-square object-fill'
 							/>
 						</div>
 
@@ -234,7 +235,7 @@ const ProfilePage = () => {
 					)}
 				</section>
 				{listings.length > 0 && (
-					<section className=''>
+					<section className='my-6'>
 						<h2 className='my-12 text-center text-2xl font-semibold'>
 							{' '}
 							Listings{' '}
