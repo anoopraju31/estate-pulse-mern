@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import { errorHandler } from '../middlewares/errorHandler.middleware'
 import Listing from '../models/Listing.model'
+import { UserRequest } from '../utills/verifyUser'
+import { errorHandler } from '../utills/error'
 import { validateListing } from '../utills/validateListing'
 
 export const createListing = async (
@@ -31,12 +32,22 @@ export const createListing = async (
 	}
 }
 
-export const deleteListing = (
-	req: Request,
+export const deleteListing = async (
+	req: UserRequest,
 	res: Response,
 	next: NextFunction,
 ) => {
-	res.json({
-		message: 'Api route is working',
-	})
+	try {
+		const listing = await Listing.findById(req.params.id)
+
+		if (!listing) return next(errorHandler(404, 'Listing does not exits'))
+
+		if (req.user.id !== listing.userRef)
+			return next(errorHandler(401, 'You can only delete your own listings!'))
+
+		await Listing.findByIdAndDelete(req.params.id)
+		return res.status(200).json('Listing has been deleted!')
+	} catch (error) {
+		next(error)
+	}
 }
