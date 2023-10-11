@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAppSelector } from '../app/hooks'
 
 interface LinkItemProps {
@@ -61,14 +61,33 @@ const SearchForm = ({
 )
 
 const Header = () => {
-	const [searchTerm, setSearchTerm] = useState('')
-	const [navIsOpen, setNavIsOpen] = useState(false)
+	const [searchTerm, setSearchTerm] = useState<string>('')
+	const [navIsOpen, setNavIsOpen] = useState<boolean>(false)
+	const navRef = useRef<HTMLDivElement | null>(null)
 	const location = useLocation()
 	const { currentUser } = useAppSelector((state) => state.user)
 
+	// close navbar on route change
 	useEffect(() => {
 		setNavIsOpen(false)
 	}, [location])
+
+	// Handle outside click
+	useEffect(() => {
+		const handleOutsideClick = (e: MouseEvent) => {
+			// Check if the click event is outside the Navbar by comparing the target element.
+			if (navRef.current && !navRef.current.contains(e.target as Node))
+				setNavIsOpen(false)
+		}
+
+		// Add a click event listener to the document to handle clicks outside the Navbar.
+		document.addEventListener('click', handleOutsideClick)
+
+		return () => {
+			// Clean up the event listener when the component unmounts.
+			document.removeEventListener('click', handleOutsideClick)
+		}
+	}, [])
 
 	// Function to handle input change
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -80,7 +99,7 @@ const Header = () => {
 		setSearchTerm('')
 	}
 	return (
-		<header className='py-1 bg-gray-100 dark:bg-gray-900'>
+		<header ref={navRef} className='py-1 bg-gray-100 dark:bg-gray-900'>
 			<div className='mx-auto flex h-16 max-w-screen-2xl justify-between items-center gap-8 px-4 sm:px-6 lg:px-8'>
 				{/* Logo */}
 				<Link to='/'>
@@ -142,11 +161,12 @@ const Header = () => {
 				</div>
 
 				{/* Menu Toggle Button*/}
-				<button
-					onClick={() => setNavIsOpen((prev) => !prev)}
-					className='block rounded bg-gray-200 p-2.5 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75 md:hidden'>
+				<button className='relative block rounded bg-gray-200 p-2.5 text-gray-600 transition hover:text-gray-600/75 dark:bg-gray-800 dark:text-white dark:hover:text-white/75 md:hidden'>
 					<span className='sr-only'>Toggle menu</span>
 					{navIsOpen ? <AiOutlineClose /> : <GiHamburgerMenu />}
+					<div
+						className='absolute top-0 left-0 right-0 w-full h-full'
+						onClick={() => setNavIsOpen((prev) => !prev)}></div>
 				</button>
 			</div>
 		</header>
