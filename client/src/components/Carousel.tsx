@@ -38,10 +38,12 @@ const Carousel = ({ images, setImages }: CarouselProps) => {
 	const [present, setPresent] = useState(0)
 
 	const removeImage = (imageToRemove: File) => {
-		setImages((prev) => ({
-			...prev,
-			images: prev.images.filter((image: File) => image !== imageToRemove),
-		}))
+		if (typeof images === 'object') {
+			setImages((prev) => ({
+				...prev,
+				images: prev.images.filter((image) => image !== imageToRemove),
+			}))
+		}
 		setPresent(0)
 	}
 	return (
@@ -64,6 +66,7 @@ const Carousel = ({ images, setImages }: CarouselProps) => {
 				{Array.isArray(images) &&
 					images.map((_, idx) => (
 						<button
+							key={idx}
 							type='button'
 							onClick={() => setPresent(idx)}
 							className='w-3 h-3 rounded-full bg-gray-900 dark:bg-white'

@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AiFillHome } from 'react-icons/ai'
 import { IoIosArrowForward } from 'react-icons/io'
 import { BiCloudUpload } from 'react-icons/bi'
 import { Carousel, Checkbox, InputField } from '../components'
 import { useAppSelector } from '../app/hooks'
+import { app } from '../firebase'
+import {
+	getDownloadURL,
+	getStorage,
+	ref,
+	uploadBytesResumable,
+} from 'firebase/storage'
+import toast from 'react-hot-toast'
 
 export interface ListingForm {
 	name: string
@@ -20,6 +28,7 @@ export interface ListingForm {
 	sale: boolean
 	rent: boolean
 	images: File[]
+	imageUrls: string[]
 	userRef: string
 }
 
@@ -38,24 +47,41 @@ const CreateListingPage = () => {
 		rent: false,
 		offer: false,
 		images: [],
+		imageUrls: [],
 		userRef: '',
 	})
-	const [isDisabled, setIsDisabled] = useState(false)
-	const { currentUser, loading } = useAppSelector((state) => state.user)
+	const [isSaveDisabled, setIsSaveDisabled] = useState(false)
+	const [isClearDisabled, setIsClearDisabled] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
+	const { currentUser } = useAppSelector((state) => state.user)
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		if (currentUser) setForm((prev) => ({ ...prev, userRef: currentUser?.id }))
 	}, [currentUser])
 
+	// disable save button if not all fields are filled
 	useEffect(() => {
-		setIsDisabled(
-			// !(
-			// 	checkForm('username', form.username) ||
-			// 	checkForm('email', form.email) ||
-			// 	checkForm('password', form.password) ||
-			// 	form.avatar !== null
-			// ),
-			false,
+		setIsSaveDisabled(
+			form.name === '' ||
+				form.description === '' ||
+				form.address === '' ||
+				form.regularPrice <= 0 ||
+				(form.offer && form.discountPrice <= 0) ||
+				form.bathrooms <= 0 ||
+				form.bedrooms <= 0 ||
+				form.images.length === 0,
+		)
+
+		setIsClearDisabled(
+			form.name === '' &&
+				form.description === '' &&
+				form.address === '' &&
+				form.regularPrice <= 0 &&
+				(form.offer || form.discountPrice <= 0) &&
+				form.bathrooms <= 0 &&
+				form.bedrooms <= 0 &&
+				form.images.length === 0,
 		)
 	}, [form])
 
@@ -98,12 +124,107 @@ const CreateListingPage = () => {
 			rent: false,
 			offer: false,
 			images: [],
+			imageUrls: [],
 			userRef: '',
 		})
 	}
 
+	// Uploading images to firebase
+	const uploadImages = async (file: File): Promise<string> => {
+		return new Promise((resolve, reject) => {
+			const storage = getStorage(app)
+			const fileName = new Date().getTime() + file.name
+			const storageRef = ref(storage, fileName)
+			const uploadTask = uploadBytesResumable(storageRef, file)
+
+			uploadTask.on(
+				'state_changed',
+				(snapshot) => {
+					const progress =
+						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+					console.log(`Upload is ${progress}% done`)
+				},
+				(error) => {
+					reject(error)
+				},
+				() => {
+					getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+						resolve(downloadURL)
+					})
+				},
+			)
+		})
+	}
+
+	// Handle Submit
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault()
+		try {
+			e.preventDefault()
+			setIsClearDisabled(true)
+			setIsSaveDisabled(true)
+			setIsLoading(true)
+
+			const promises = []
+
+			for (let i = 0; i < form.images.length; i++) {
+				promises.push(uploadImages(form.images[i]))
+			}
+
+			Promise.all(promises)
+				.then((urls) => {
+					try {
+						fetch('/api/listing/create', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								name: form.name,
+								description: form.description,
+								address: form.address,
+								regularPrice: Number(form.regularPrice),
+								discountPrice: Number(form.discountPrice),
+								bathrooms: Number(form.bathrooms),
+								bedrooms: Number(form.bedrooms),
+								furnished: form.furnished,
+								parking: form.parking,
+								type: form.sale ? 'sale' : 'rent',
+								offer: form.offer,
+								imageUrls: urls,
+								userRef: form.userRef,
+							}),
+						})
+							.then((res) => res.json())
+							.then((data) => {
+								if (!data.success) {
+									toast.error(data?.message)
+									return
+								} else {
+									toast.success('Listing Created')
+									navigate('/')
+								}
+							})
+							.catch((error) => {
+								console.log(error)
+
+								toast.error((error as Error)?.message)
+							})
+					} catch (error) {
+						console.log(error)
+
+						toast.error((error as Error)?.message)
+					}
+				})
+				.catch((error) => {
+					toast.error((error as Error)?.message)
+				})
+		} catch (error) {
+			toast.error((error as Error)?.message)
+
+			setIsLoading(false)
+			setIsClearDisabled(false)
+			setIsSaveDisabled(false)
+		}
 	}
 
 	return (
@@ -185,7 +306,7 @@ const CreateListingPage = () => {
 						<div className='w-full flex flex-col sm:flex-row sm:justify-between gap-4'>
 							{/* Clear Button */}
 							<button
-								disabled={isDisabled}
+								disabled={isClearDisabled}
 								type='reset'
 								onClick={handleClear}
 								className='w-full py-3 px-6 bg-red-500 disabled:bg-red-500/60 rounded-lg text-center uppercase text-white font-medium'>
@@ -202,10 +323,10 @@ const CreateListingPage = () => {
 
 							{/* Save Button */}
 							<button
-								disabled={isDisabled}
+								disabled={isSaveDisabled}
 								type='submit'
 								className='w-full py-3 px-6 bg-green-500 disabled:bg-green-500/60 rounded-lg text-center uppercase text-white font-medium'>
-								{loading ? 'Saving...' : 'Save'}
+								{isLoading ? 'Saving...' : 'Save'}
 							</button>
 						</div>
 					</div>
