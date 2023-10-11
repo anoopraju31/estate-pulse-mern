@@ -33,6 +33,7 @@ const Model = ({ cancel, proceed }: ModelProps) => (
 				{/* Delete account */}
 				<button
 					onClick={proceed}
+					tabIndex={0}
 					className='w-full sm:w-fit py-2 px-4 bg-red-600 text-white rounded-lg font-medium'
 					type='button'>
 					Delete
@@ -41,6 +42,7 @@ const Model = ({ cancel, proceed }: ModelProps) => (
 				{/* Cancel */}
 				<button
 					onClick={cancel}
+					tabIndex={0}
 					className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'
 					type='button'>
 					Cancel
