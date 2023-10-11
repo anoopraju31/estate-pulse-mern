@@ -21,6 +21,30 @@ interface ModelProps {
 	proceed: () => void
 }
 
+export interface Listing {
+	_id: string
+	name: string
+	description: string
+	address: string
+	regularPrice: number
+	discountPrice: number
+	bathrooms: number
+	bedrooms: number
+	furnished: boolean
+	parking: boolean
+	type: 'rent' | 'sale'
+	offer: boolean
+	imageUrls: string[]
+	userRef: string
+	createdAt: string
+	updatedAt: string
+}
+
+interface UserListings {
+	success: boolean
+	listings?: Listing[]
+}
+
 const Model = ({ cancel, proceed }: ModelProps) => (
 	<div className=' fixed top-0 left-0 right-0 h-screen z-50 flex justify-center items-center backdrop-blur-md bg-gray-900/10 dark:bg-gray-100/10'>
 		<div className='p-10 max-w-lg bg-gray-100 dark:bg-gray-900 rounded-xl'>
@@ -56,12 +80,26 @@ const Model = ({ cancel, proceed }: ModelProps) => (
 const ProfilePage = () => {
 	const [isModelOpen, setIsModelOpen] = useState(false)
 	const { currentUser, loading } = useAppSelector((state) => state.user)
+	const [listings, setListings] = useState<Listing[]>([])
 	const auth = getAuth()
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
 		document.body.style.overflow = isModelOpen ? 'hidden' : 'visible'
 	}, [isModelOpen])
+
+	useEffect(() => {
+		const getListings = async () => {
+			const res = await fetch(`/api/user/listings/${currentUser?.id}`)
+			const data: UserListings = await res.json()
+
+			if (data.success && data.listings) {
+				setListings(data?.listings)
+			}
+		}
+
+		getListings()
+	}, [currentUser])
 
 	const handleSignOut = () => {
 		dispatch(signOutUserStart())
@@ -138,7 +176,7 @@ const ProfilePage = () => {
 							<img
 								src={currentUser?.avatar}
 								alt={`${currentUser?.username} profile`}
-								className='w-20 md:w-24 h-20 md:h-24 rounded-full'
+								className='w-20 md:w-24 h-20 md:h-24 rounded-full aspect-square object-fill'
 							/>
 						</div>
 
@@ -195,34 +233,20 @@ const ProfilePage = () => {
 						/>
 					)}
 				</section>
-				<section className=''>
-					<h2 className='my-12 text-center text-2xl font-semibold'>
-						{' '}
-						Listings{' '}
-					</h2>
+				{listings.length > 0 && (
+					<section className=''>
+						<h2 className='my-12 text-center text-2xl font-semibold'>
+							{' '}
+							Listings{' '}
+						</h2>
 
-					<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-						<ListingCard />
-					</div>
-				</section>
+						<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
+							{listings.map((listing) => (
+								<ListingCard key={listing._id} listing={listing} />
+							))}
+						</div>
+					</section>
+				)}
 			</div>
 		</main>
 	)
