@@ -3,6 +3,7 @@ import bcryptjs from 'bcryptjs'
 import { errorHandler } from '../utills/error'
 import { UserRequest } from '../utills/verifyUser'
 import User from '../models/User.model'
+import Listing from '../models/Listing.model'
 
 export const test = (req: Request, res: Response) => {
 	res.json({
@@ -75,7 +76,13 @@ export const getUserListings = async (
 	res: Response,
 	next: NextFunction,
 ) => {
-	res.json({
-		message: 'Api route is working',
-	})
+	if (req.user.id !== req.params.id)
+		return next(errorHandler(401, 'You can only view your own account'))
+
+	try {
+		const listings = await Listing.find({ userRef: req.params.id })
+		return res.status(200).json({ success: true, listings })
+	} catch (error) {
+		next(error)
+	}
 }
