@@ -56,7 +56,7 @@ export const validateListing = (
 
 	if (
 		regularPrice <= 0 ||
-		discountPrice <= 0 ||
+		(offer && discountPrice <= 0) ||
 		bathrooms <= 0 ||
 		bedrooms <= 0
 	) {

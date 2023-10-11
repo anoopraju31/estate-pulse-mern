@@ -9,7 +9,11 @@ export const createListing = async (
 	next: NextFunction,
 ) => {
 	try {
+		console.log(req.body)
+
 		const validationResult = validateListing(req.body)
+
+		console.log('validationResult', validationResult)
 
 		if (!validationResult.isValid) {
 			return next(validationResult?.error)
@@ -21,6 +25,8 @@ export const createListing = async (
 			listing,
 		})
 	} catch (error) {
+		console.log(error)
+
 		next(error)
 	}
 }
