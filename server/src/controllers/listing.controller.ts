@@ -30,3 +30,13 @@ export const createListing = async (
 		next(error)
 	}
 }
+
+export const deleteListing = (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	res.json({
+		message: 'Api route is working',
+	})
+}
