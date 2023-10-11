@@ -14,6 +14,7 @@ import {
 } from '../reducers/userSlice'
 import toast from 'react-hot-toast'
 import { useEffect, useState } from 'react'
+import { ListingCard } from '../components'
 
 interface ModelProps {
 	cancel: () => void
@@ -123,83 +124,106 @@ const ProfilePage = () => {
 						</li>
 					</ol>
 				</nav>
-				{/* Heading */}
-				<h1 className='mb-4 md:mb-8 text-3xl text-center font-semibold'>
-					Profile
-				</h1>
 
-				<div className='flex flex-col items-center gap-6 md:gap-8'>
-					{/* Profile */}
-					<div className=''>
-						<img
-							src={currentUser?.avatar}
-							alt={`${currentUser?.username} profile`}
-							className='w-20 md:w-24 h-20 md:h-24 rounded-full'
+				{/* profile section */}
+				<section className=''>
+					{/* Heading */}
+					<h1 className='mb-4 md:mb-8 text-3xl text-center font-semibold'>
+						Profile
+					</h1>
+
+					<div className='flex flex-col items-center gap-6 md:gap-8'>
+						{/* Profile */}
+						<div className=''>
+							<img
+								src={currentUser?.avatar}
+								alt={`${currentUser?.username} profile`}
+								className='w-20 md:w-24 h-20 md:h-24 rounded-full'
+							/>
+						</div>
+
+						{/* Name & email */}
+						<div className='text-center '>
+							<h2 className='text-xl font-medium mb-2'>
+								{' '}
+								{currentUser?.username}{' '}
+							</h2>
+							<p className='text-sm'> {currentUser?.email} </p>
+						</div>
+
+						{/* Buttons */}
+						<div className='flex flex-wrap justify-center items-center gap-4'>
+							{/* Edit */}
+							<Link
+								to='/profile/edit'
+								className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 text-center rounded-lg font-medium'>
+								{' '}
+								Edit profile{' '}
+							</Link>
+
+							{/* Create Listing */}
+							<Link
+								to='/listing/create'
+								className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 text-center rounded-lg font-medium'
+								type='button'>
+								{' '}
+								Create listing{' '}
+							</Link>
+
+							{/* Sign Out */}
+							<button
+								onClick={handleSignOut}
+								className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'
+								type='button'>
+								SignOut
+							</button>
+
+							{/* Delete account */}
+							<button
+								onClick={() => setIsModelOpen(true)}
+								className='w-full sm:w-fit py-2 px-4 bg-red-600 text-white rounded-lg font-medium'
+								type='button'>
+								{loading ? 'Deleting...' : 'Delete'}
+							</button>
+						</div>
+					</div>
+
+					{isModelOpen && (
+						<Model
+							proceed={handleDeleteAccount}
+							cancel={() => setIsModelOpen(false)}
 						/>
-					</div>
-
-					{/* Name & email */}
-					<div className='text-center '>
-						<h2 className='text-xl font-medium mb-2'>
-							{' '}
-							{currentUser?.username}{' '}
-						</h2>
-						<p className='text-sm'> {currentUser?.email} </p>
-					</div>
-
-					{/* Buttons */}
-					<div className='flex flex-wrap justify-center items-center gap-4'>
-						{/* Edit */}
-						<Link
-							to='/profile/edit'
-							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 text-center rounded-lg font-medium'>
-							{' '}
-							Edit profile{' '}
-						</Link>
-
-						{/* Create Listing */}
-						<Link
-							to='/listing/create'
-							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 text-center rounded-lg font-medium'
-							type='button'>
-							{' '}
-							Create listing{' '}
-						</Link>
-
-						{/* Sign Out */}
-						<button
-							onClick={handleSignOut}
-							className='w-full sm:w-fit py-2 px-4 bg-gray-600 dark:bg-white text-white dark:text-gray-900 rounded-lg font-medium'
-							type='button'>
-							SignOut
-						</button>
-
-						{/* Delete account */}
-						<button
-							onClick={() => setIsModelOpen(true)}
-							className='w-full sm:w-fit py-2 px-4 bg-red-600 text-white rounded-lg font-medium'
-							type='button'>
-							{loading ? 'Deleting...' : 'Delete'}
-						</button>
-					</div>
-				</div>
-
-				<div className=''>
+					)}
+				</section>
+				<section className=''>
 					<h2 className='my-12 text-center text-2xl font-semibold'>
 						{' '}
 						Listings{' '}
 					</h2>
 
-					<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'></div>
-				</div>
+					<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+						<ListingCard />
+					</div>
+				</section>
 			</div>
-
-			{isModelOpen && (
-				<Model
-					proceed={handleDeleteAccount}
-					cancel={() => setIsModelOpen(false)}
-				/>
-			)}
 		</main>
 	)
 }
