@@ -8,7 +8,7 @@ import {
 	SignInPage,
 	SignUpPage,
 } from './pages'
-import { Header, PrivateRoute } from './components'
+import { Footer, Header, PrivateRoute } from './components'
 import { Toaster } from 'react-hot-toast'
 
 const App = () => {
@@ -33,6 +33,7 @@ const App = () => {
 			<Toaster position='top-center' />
 
 			{/* Footer */}
+			<Footer />
 		</BrowserRouter>
 	)
 }
