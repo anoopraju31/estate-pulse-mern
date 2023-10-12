@@ -55,7 +55,7 @@ export const deleteListing = async (
 }
 
 export const getListingById = async (
-	req: UserRequest,
+	req: Request,
 	res: Response,
 	next: NextFunction,
 ) => {
@@ -65,6 +65,30 @@ export const getListingById = async (
 		if (!listing) return next(errorHandler(404, 'Listing does not exits'))
 
 		return res.status(200).json({ success: true, listing })
+	} catch (error) {
+		next(error)
+	}
+}
+
+export const updateListing = async (
+	req: UserRequest,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const listing = await Listing.findById(req.params.id)
+
+		if (!listing) return next(errorHandler(404, 'Listing does not exits'))
+
+		if (req.user.id !== listing.userRef)
+			return next(errorHandler(401, 'You can only delete your own listings!'))
+
+		const updatedListing = await Listing.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{ new: true },
+		)
+		res.status(200).json({ success: true, listing: updatedListing })
 	} catch (error) {
 		next(error)
 	}
