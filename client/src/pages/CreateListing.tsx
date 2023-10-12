@@ -11,6 +11,7 @@ import { BiCloudUpload } from 'react-icons/bi'
 import { Breadcrumb, Carousel, Checkbox, InputField } from '../components'
 import { useAppSelector } from '../app/hooks'
 import { app } from '../firebase'
+import { removeDuplicates } from '../utils'
 
 export interface ListingForm {
 	name: string
@@ -83,6 +84,17 @@ const CreateListingPage = () => {
 		)
 	}, [form])
 
+	const getImageUrls = () => {
+		return form.images.map((image) => window.URL.createObjectURL(image))
+	}
+
+	const setImages = (imageToRemove: number) => {
+		setForm((prev) => ({
+			...prev,
+			images: prev.images.filter((_, idx) => idx !== imageToRemove),
+		}))
+	}
+
 	// Handle Form Data Change
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -91,7 +103,10 @@ const CreateListingPage = () => {
 			...prev,
 			[e.target.id]:
 				e.target.id === 'images'
-					? Array.from((e.target as HTMLInputElement).files as FileList)
+					? removeDuplicates([
+							...prev.images,
+							...Array.from((e.target as HTMLInputElement).files as FileList),
+					  ])
 					: e.target.type === 'checkbox' && e.target instanceof HTMLInputElement
 					? e.target.checked
 					: e.target.value,
@@ -243,7 +258,7 @@ const CreateListingPage = () => {
 					<div className='h-fit flex-1 flex flex-col gap-6 items-center sticky left-0 right-0 md:top-6 lg:top-8 '>
 						{/* Image Preview */}
 						{form.images.length > 0 && (
-							<Carousel images={form.images} setImages={setForm} />
+							<Carousel images={getImageUrls()} setImages={setImages} />
 						)}
 
 						{/* Image Input */}

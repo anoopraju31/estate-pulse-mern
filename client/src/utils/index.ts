@@ -11,3 +11,15 @@ export const checkForm = (
 	} else if (label === 'email') return emailPattern.test(value)
 	else return value.length >= 8
 }
+
+export const removeDuplicates = (arr: (string | File)[]) => {
+	const uniqueFiles = new Set()
+
+	return arr.filter((file: string | File) => {
+		if (!uniqueFiles.has(file)) {
+			uniqueFiles.add(file)
+			return true
+		}
+		return false
+	})
+}
