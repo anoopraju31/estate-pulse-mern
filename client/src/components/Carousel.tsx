@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 import { IoMdTrash } from 'react-icons/io'
-import { ListingForm } from '../pages/CreateListing'
 
 interface CarouselProps {
-	images: File[]
-	setImages: React.Dispatch<React.SetStateAction<ListingForm>>
+	images: string[]
+	setImages: (imageToRemove: number) => void
 }
 
 interface ImagePreviewProps {
@@ -37,13 +36,8 @@ const ImagePreview = ({ src, visible, removeImage }: ImagePreviewProps) => {
 const Carousel = ({ images, setImages }: CarouselProps) => {
 	const [present, setPresent] = useState(0)
 
-	const removeImage = (imageToRemove: File) => {
-		if (typeof images === 'object') {
-			setImages((prev) => ({
-				...prev,
-				images: prev.images.filter((image) => image !== imageToRemove),
-			}))
-		}
+	const removeImage = (idxToRemove: number) => {
+		setImages(idxToRemove)
 		setPresent(0)
 	}
 	return (
@@ -51,11 +45,11 @@ const Carousel = ({ images, setImages }: CarouselProps) => {
 			{/* Carousel Wrapper */}
 			<div className='relative h-56 overflow-hidden rounded-lg md:h-96'>
 				{Array.isArray(images) &&
-					images.map((image: File, idx: number) => (
+					images.map((image: string, idx: number) => (
 						<ImagePreview
 							key={idx}
-							src={window.URL.createObjectURL(image)}
-							removeImage={() => removeImage(image)}
+							src={image}
+							removeImage={() => removeImage(idx)}
 							visible={present === idx}
 						/>
 					))}
@@ -69,7 +63,11 @@ const Carousel = ({ images, setImages }: CarouselProps) => {
 							key={idx}
 							type='button'
 							onClick={() => setPresent(idx)}
-							className='w-3 h-3 rounded-full bg-gray-900 dark:bg-white'
+							className={`w-3 h-3 rounded-full  ${
+								present === idx
+									? 'bg-gray-900/60 dark:bg-white/60'
+									: 'bg-gray-900 dark:bg-white'
+							}`}
 							aria-current={present === idx ? 'true' : 'false'}
 							aria-label={`slide-${idx}`}
 						/>
