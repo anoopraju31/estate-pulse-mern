@@ -1,7 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAuth, signOut } from 'firebase/auth'
-// import { AiFillHome } from 'react-icons/ai'
-// import { IoIosArrowForward } from 'react-icons/io'
+import toast from 'react-hot-toast'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
 	deleteUserFailure,
@@ -12,13 +12,12 @@ import {
 	signOutUserSuccess,
 	updateUserFailure,
 } from '../reducers/userSlice'
-import toast from 'react-hot-toast'
-import { useEffect, useState } from 'react'
 import { Breadcrumb, ListingCard } from '../components'
 
 interface ModelProps {
 	cancel: () => void
 	proceed: () => void
+	type: 'DELETE_ACCOUNT' | 'DELETE_LISTING'
 }
 
 export interface Listing {
@@ -45,13 +44,18 @@ interface UserListings {
 	listings?: Listing[]
 }
 
-const Model = ({ cancel, proceed }: ModelProps) => (
+interface Model {
+	isOpen: boolean
+	type: 'DELETE_ACCOUNT' | 'DELETE_LISTING' | null
+	listingId?: string
+}
+
+const Model = ({ cancel, proceed, type }: ModelProps) => (
 	<div className=' fixed top-0 left-0 right-0 h-screen z-50 flex justify-center items-center backdrop-blur-md bg-gray-900/10 dark:bg-gray-100/10'>
 		<div className='p-10 max-w-lg bg-gray-100 dark:bg-gray-900 rounded-xl'>
 			<h1 className='text-red-500 font-bold text-center text-xl'>
-				{' '}
 				Are you sure? <br className='md:hidden' /> you want to delete your
-				account?{' '}
+				{type === 'DELETE_ACCOUNT' ? ' account' : ' listing'}?
 			</h1>
 
 			<div className='mt-10 flex justify-end gap-4'>
@@ -78,16 +82,21 @@ const Model = ({ cancel, proceed }: ModelProps) => (
 )
 
 const ProfilePage = () => {
-	const [isModelOpen, setIsModelOpen] = useState(false)
+	const [model, setModel] = useState<Model>({
+		isOpen: false,
+		type: null,
+		listingId: '',
+	})
 	const { currentUser, loading } = useAppSelector((state) => state.user)
 	const [listings, setListings] = useState<Listing[]>([])
 	const auth = getAuth()
 	const dispatch = useAppDispatch()
 
 	useEffect(() => {
-		document.body.style.overflow = isModelOpen ? 'hidden' : 'visible'
-	}, [isModelOpen])
+		document.body.style.overflow = model.isOpen ? 'hidden' : 'visible'
+	}, [model])
 
+	// Fetch user listings
 	useEffect(() => {
 		const getListings = async () => {
 			const res = await fetch(`/api/user/listings/${currentUser?.id}`)
@@ -101,6 +110,7 @@ const ProfilePage = () => {
 		getListings()
 	}, [currentUser])
 
+	// Function to handle user sign out
 	const handleSignOut = () => {
 		dispatch(signOutUserStart())
 		signOut(auth)
@@ -114,10 +124,15 @@ const ProfilePage = () => {
 			})
 	}
 
+	// Function to delete a user account
 	const handleDeleteAccount = async () => {
 		try {
 			dispatch(deleteUserStart())
-			setIsModelOpen(false)
+			setModel({
+				isOpen: false,
+				type: null,
+				listingId: '',
+			})
 
 			const res = await fetch(`/api/user/delete/${currentUser?.id}`, {
 				method: 'DELETE',
@@ -135,6 +150,41 @@ const ProfilePage = () => {
 			dispatch(deleteUserFailure((error as Error)?.message))
 			console.error(error)
 			toast.error((error as Error)?.message)
+		}
+	}
+
+	// Function to delete a user listing
+	const handleDeleteListing = async (listingId: string) => {
+		try {
+			const res = await fetch(`/api/listing/delete/${listingId}`, {
+				method: 'DELETE',
+			})
+			setModel({
+				isOpen: false,
+				type: null,
+				listingId: '',
+			})
+
+			const data = await res.json()
+
+			if (data?.success) {
+				toast.success('Listing Deleted!')
+				setListings((prev) =>
+					prev.filter((listing) => listing._id !== listingId),
+				)
+			}
+		} catch (error) {
+			console.log(error)
+			toast.error((error as Error)?.message)
+		}
+	}
+
+	// Function to handle model proceed
+	const handleModel = () => {
+		if (model.type === 'DELETE_ACCOUNT') {
+			handleDeleteAccount()
+		} else if (model.type === 'DELETE_LISTING' && model.listingId) {
+			handleDeleteListing(model.listingId)
 		}
 	}
 
@@ -200,7 +250,12 @@ const ProfilePage = () => {
 
 							{/* Delete account */}
 							<button
-								onClick={() => setIsModelOpen(true)}
+								onClick={() =>
+									setModel({
+										isOpen: true,
+										type: 'DELETE_ACCOUNT',
+									})
+								}
 								className='w-full sm:w-fit py-2 px-4 bg-red-600 text-white rounded-lg font-medium'
 								type='button'>
 								{loading ? 'Deleting...' : 'Delete'}
@@ -208,10 +263,16 @@ const ProfilePage = () => {
 						</div>
 					</div>
 
-					{isModelOpen && (
+					{model.isOpen && model.type && (
 						<Model
-							proceed={handleDeleteAccount}
-							cancel={() => setIsModelOpen(false)}
+							proceed={handleModel}
+							cancel={() =>
+								setModel({
+									isOpen: false,
+									type: null,
+								})
+							}
+							type={model.type}
 						/>
 					)}
 				</section>
@@ -224,7 +285,17 @@ const ProfilePage = () => {
 
 						<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6'>
 							{listings.map((listing) => (
-								<ListingCard key={listing._id} listing={listing} />
+								<ListingCard
+									key={listing._id}
+									listing={listing}
+									handleDelete={(id: string) =>
+										setModel({
+											isOpen: true,
+											type: 'DELETE_LISTING',
+											listingId: id,
+										})
+									}
+								/>
 							))}
 						</div>
 					</section>

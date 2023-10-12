@@ -46,7 +46,9 @@ export const deleteListing = async (
 			return next(errorHandler(401, 'You can only delete your own listings!'))
 
 		await Listing.findByIdAndDelete(req.params.id)
-		return res.status(200).json('Listing has been deleted!')
+		return res
+			.status(200)
+			.json({ success: true, message: 'Listing has been deleted!' })
 	} catch (error) {
 		next(error)
 	}
