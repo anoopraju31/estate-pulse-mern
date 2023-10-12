@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { MdLocationOn } from 'react-icons/md'
 import { Listing } from '../pages/Profile'
 import { useAppSelector } from '../app/hooks'
@@ -11,11 +11,16 @@ interface ListingCardProps {
 const ListingCard = ({ listing, handleDelete }: ListingCardProps) => {
 	const { currentUser } = useAppSelector((state) => state.user)
 	const url = window.location.pathname
+	const navigate = useNavigate()
 
 	const deleteListing = () => {
 		if (handleDelete) {
 			handleDelete(listing._id)
 		}
+	}
+
+	const handleEdit = () => {
+		navigate(`/listing/edit/${listing._id}`)
 	}
 
 	return (
@@ -83,6 +88,7 @@ const ListingCard = ({ listing, handleDelete }: ListingCardProps) => {
 					{/* Edit Button */}
 					<button
 						type='button'
+						onClick={handleEdit}
 						className='py-1 px-4 bg-green-500 disabled:bg-green-500/60 rounded text-center uppercase text-white font-medium'>
 						Edit
 					</button>

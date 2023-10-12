@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { AiFillHome } from 'react-icons/ai'
-import { IoIosArrowForward } from 'react-icons/io'
-import { BiCloudUpload } from 'react-icons/bi'
-import { Carousel, Checkbox, InputField } from '../components'
-import { useAppSelector } from '../app/hooks'
-import { app } from '../firebase'
 import {
 	getDownloadURL,
 	getStorage,
@@ -13,6 +7,10 @@ import {
 	uploadBytesResumable,
 } from 'firebase/storage'
 import toast from 'react-hot-toast'
+import { BiCloudUpload } from 'react-icons/bi'
+import { Breadcrumb, Carousel, Checkbox, InputField } from '../components'
+import { useAppSelector } from '../app/hooks'
+import { app } from '../firebase'
 
 export interface ListingForm {
 	name: string
@@ -53,8 +51,8 @@ const CreateListingPage = () => {
 	const [isSaveDisabled, setIsSaveDisabled] = useState(false)
 	const [isClearDisabled, setIsClearDisabled] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
-	const { currentUser } = useAppSelector((state) => state.user)
 	const navigate = useNavigate()
+	const { currentUser } = useAppSelector((state) => state.user)
 
 	useEffect(() => {
 		if (currentUser) setForm((prev) => ({ ...prev, userRef: currentUser?.id }))
@@ -231,39 +229,10 @@ const CreateListingPage = () => {
 		<main className='bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white'>
 			<section className='max-w-screen-2xl min-h-[var(--container-min-height)] mx-auto py-4 md:py-8 px-4 sm:px-6 lg:px-8 flex flex-col'>
 				{/* Breadcrumb */}
-				<nav className='my-4 flex' aria-label='Breadcrumb'>
-					<ol className='inline-flex items-center space-x-1 md:space-x-3'>
-						<li className='inline-flex items-center'>
-							<Link
-								to='/'
-								className='inline-flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white'>
-								<AiFillHome />
-								Home
-							</Link>
-						</li>
-						<li>
-							<div className='flex items-center text-gray-500 md:ml-2 dark:text-gray-400'>
-								<IoIosArrowForward />
-								<Link
-									to='/listing'
-									className='ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white'>
-									listing
-								</Link>
-							</div>
-						</li>
-						<li aria-current='page'>
-							<div className='flex items-center text-gray-500 md:ml-2 dark:text-gray-400'>
-								<IoIosArrowForward />
-								<span className='ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400'>
-									create
-								</span>
-							</div>
-						</li>
-					</ol>
-				</nav>
+				<Breadcrumb />
 
 				{/* Heading */}
-				<h1 className='md:mb-8 text-3xl text-center font-semibold'>
+				<h1 className='md:mb-8 text-3xl text-center font-semibold capitalize'>
 					Create Listing
 				</h1>
 

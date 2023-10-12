@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import {
 	AboutPage,
 	CreateListingPage,
+	EditListingPage,
 	EditProfilePage,
 	HomePage,
 	ProfilePage,
@@ -27,6 +28,7 @@ const App = () => {
 					<Route path='/profile' element={<ProfilePage />} />
 					<Route path='/profile/edit' element={<EditProfilePage />} />
 					<Route path='/listing/create' element={<CreateListingPage />} />
+					<Route path='/listing/edit/:id' element={<EditListingPage />} />
 				</Route>
 			</Routes>
 
