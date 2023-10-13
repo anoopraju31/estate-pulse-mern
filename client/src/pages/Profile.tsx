@@ -126,7 +126,7 @@ const ProfilePage = () => {
 	}
 
 	// Function to delete a user account
-	const handleDeleteAccount = async () => {
+	const handleDeleteAccount = () => {
 		try {
 			dispatch(deleteUserStart())
 			setModel({
@@ -135,18 +135,41 @@ const ProfilePage = () => {
 				listingId: '',
 			})
 
-			const res = await fetch(`/api/user/delete/${currentUser?.id}`, {
+			fetch(`/api/user/delete/${currentUser?.id}`, {
 				method: 'DELETE',
 			})
-			const data = await res.json()
+				.then((res) => res.json())
+				.then((data) => {
+					if (!data?.success) {
+						dispatch(updateUserFailure(data.message))
+						toast.error(data?.message)
+						return
+					}
 
-			if (!data?.success) {
-				dispatch(updateUserFailure(data.message))
-				toast.error(data?.message)
-				return
-			}
+					const deletedImagesPromises = []
+					const imageUrls: string[] = []
 
-			dispatch(deleteUserSuccess(data))
+					for (const listing of listings) {
+						if (listing.imageUrls) {
+							imageUrls.push(...listing.imageUrls)
+						}
+					}
+
+					for (const imageUrl of imageUrls) {
+						deletedImagesPromises.push(deleteImage(imageUrl))
+					}
+
+					Promise.all(deletedImagesPromises)
+						.then((messages) => {
+							console.log(messages)
+							dispatch(deleteUserSuccess(data))
+							toast.success('Deleted user successfully!')
+						})
+						.catch((error) => {
+							console.error(error)
+							toast.error((error as Error)?.message)
+						})
+				})
 		} catch (error) {
 			dispatch(deleteUserFailure((error as Error)?.message))
 			console.error(error)

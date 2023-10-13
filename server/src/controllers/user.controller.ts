@@ -62,7 +62,9 @@ export const deleteUser = async (
 		return next(errorHandler(401, 'You can only update your own account'))
 
 	try {
-		await User.findByIdAndDelete(req.params.id)
+		await Listing.deleteMany({ userRef: req.user.id })
+		await User.findByIdAndDelete(req.user.id)
+
 		res.clearCookie('access_token')
 		res.status(200).json({ success: true, message: 'User has been deleted!' })
 	} catch (error) {
