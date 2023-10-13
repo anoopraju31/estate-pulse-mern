@@ -1,17 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-	getDownloadURL,
-	getStorage,
-	ref,
-	uploadBytesResumable,
-} from 'firebase/storage'
 import toast from 'react-hot-toast'
 import { BiCloudUpload } from 'react-icons/bi'
 import { Breadcrumb, Carousel, Checkbox, InputField } from '../components'
 import { useAppSelector } from '../app/hooks'
-import { app } from '../firebase'
-import { removeDuplicates } from '../utils'
+import { removeDuplicates, uploadImages } from '../utils'
 
 export interface ListingForm {
 	name: string
@@ -84,10 +77,12 @@ const CreateListingPage = () => {
 		)
 	}, [form])
 
+	// Function to get Image source urls
 	const getImageUrls = () => {
 		return form.images.map((image) => window.URL.createObjectURL(image))
 	}
 
+	// Function to remove images
 	const setImages = (imageToRemove: number) => {
 		setForm((prev) => ({
 			...prev,
@@ -139,33 +134,6 @@ const CreateListingPage = () => {
 			images: [],
 			imageUrls: [],
 			userRef: '',
-		})
-	}
-
-	// Uploading images to firebase
-	const uploadImages = async (file: File): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			const storage = getStorage(app)
-			const fileName = new Date().getTime() + file.name
-			const storageRef = ref(storage, fileName)
-			const uploadTask = uploadBytesResumable(storageRef, file)
-
-			uploadTask.on(
-				'state_changed',
-				(snapshot) => {
-					const progress =
-						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
-					console.log(`Upload is ${progress}% done`)
-				},
-				(error) => {
-					reject(error)
-				},
-				() => {
-					getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-						resolve(downloadURL)
-					})
-				},
-			)
 		})
 	}
 

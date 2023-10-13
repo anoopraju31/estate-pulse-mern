@@ -1,18 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-	getDownloadURL,
-	getStorage,
-	ref,
-	uploadBytesResumable,
-	deleteObject,
-} from 'firebase/storage'
 import toast from 'react-hot-toast'
 import { BiCloudUpload } from 'react-icons/bi'
 import { Breadcrumb, Carousel, Checkbox, InputField } from '../components'
 import { useAppSelector } from '../app/hooks'
-import { app } from '../firebase'
-import { removeDuplicates } from '../utils'
+import { deleteImage, removeDuplicates, uploadImages } from '../utils'
 
 interface ListingForm {
 	id: string
@@ -163,6 +155,7 @@ const EditListingPage = () => {
 		}))
 	}
 
+	// Function to get Image source urls
 	const getImages = () => {
 		return form.images.map((image: string | File) => {
 			if (typeof image === 'string') return image
@@ -170,8 +163,9 @@ const EditListingPage = () => {
 		})
 	}
 
+	// Function to remove images
 	const setImages = (imageToRemove: number) => {
-		// store deleted images
+		// store deleted images (these are the image that are already uploaded in firebase)
 		if (typeof form.images[imageToRemove] === 'string')
 			setDeletedImages((prev) => [
 				...prev,
@@ -211,50 +205,6 @@ const EditListingPage = () => {
 			images: [],
 			imageUrls: [],
 		}))
-	}
-
-	// Uploading images to firebase
-	const uploadImages = async (file: File): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			const storage = getStorage(app)
-			const fileName = new Date().getTime() + file.name
-			const storageRef = ref(storage, fileName)
-			const uploadTask = uploadBytesResumable(storageRef, file)
-
-			uploadTask.on(
-				'state_changed',
-				(snapshot) => {
-					const progress =
-						(snapshot.bytesTransferred / snapshot.totalBytes) * 100
-					console.log(`Upload is ${progress}% done`)
-				},
-				(error) => {
-					reject(error)
-				},
-				() => {
-					getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-						resolve(downloadURL)
-					})
-				},
-			)
-		})
-	}
-
-	const deleteImage = (fileUrl: string): Promise<string> => {
-		return new Promise((resolve, reject) => {
-			const storage = getStorage(app)
-			const fileRef = ref(storage, fileUrl)
-
-			deleteObject(fileRef)
-				.then(() => {
-					console.log('file deleted successfully')
-					resolve('file deleted successfully')
-				})
-				.catch((error) => {
-					console.log(error)
-					reject(error.message)
-				})
-		})
 	}
 
 	// Handle Submit
