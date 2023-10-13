@@ -5,6 +5,7 @@ import {
 	EditListingPage,
 	EditProfilePage,
 	HomePage,
+	ListingPage,
 	ProfilePage,
 	SignInPage,
 	SignUpPage,
@@ -24,6 +25,7 @@ const App = () => {
 				<Route path='/sign-in' element={<SignInPage />} />
 				<Route path='/sign-up' element={<SignUpPage />} />
 				<Route path='/about' element={<AboutPage />} />
+				<Route path='/listing/:id' element={<ListingPage />} />
 				<Route element={<PrivateRoute />}>
 					<Route path='/profile' element={<ProfilePage />} />
 					<Route path='/profile/edit' element={<EditProfilePage />} />
