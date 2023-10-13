@@ -13,6 +13,7 @@ import {
 	updateUserFailure,
 } from '../reducers/userSlice'
 import { Breadcrumb, ListingCard } from '../components'
+import { deleteImage } from '../utils'
 
 interface ModelProps {
 	cancel: () => void
@@ -156,6 +157,9 @@ const ProfilePage = () => {
 	// Function to delete a user listing
 	const handleDeleteListing = async (listingId: string) => {
 		try {
+			const listing: Listing = listings.filter(
+				(listing) => listing._id === listingId,
+			)[0]
 			const res = await fetch(`/api/listing/delete/${listingId}`, {
 				method: 'DELETE',
 			})
@@ -168,10 +172,25 @@ const ProfilePage = () => {
 			const data = await res.json()
 
 			if (data?.success) {
-				toast.success('Listing Deleted!')
-				setListings((prev) =>
-					prev.filter((listing) => listing._id !== listingId),
-				)
+				const deletedImagesPromises = []
+
+				for (const imageUrl of listing.imageUrls) {
+					deletedImagesPromises.push(deleteImage(imageUrl))
+				}
+
+				Promise.all(deletedImagesPromises)
+					.then((messages) => {
+						console.log(messages)
+
+						toast.success('Listing Deleted!')
+						setListings((prev) =>
+							prev.filter((listing) => listing._id !== listingId),
+						)
+					})
+					.catch((error) => {
+						console.log(error)
+						toast.error((error as Error)?.message)
+					})
 			}
 		} catch (error) {
 			console.log(error)
