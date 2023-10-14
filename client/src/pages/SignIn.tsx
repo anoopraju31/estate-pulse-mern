@@ -31,11 +31,15 @@ const SignInPage = () => {
 		)
 	}, [form])
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleChange = (
+		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => {
 		setForm((prev) => ({ ...prev, [e.target.id]: e.target.value }))
 	}
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (
+		e: React.FormEvent<HTMLFormElement | HTMLTextAreaElement>,
+	) => {
 		e.preventDefault()
 
 		try {
@@ -118,7 +122,7 @@ const SignInPage = () => {
 				<div className='px-4'>
 					<p className='text-gray-900 dark:text-white text-center'>
 						Dont have an account?
-						<Link to='/sign-in' className='text-red-500 hover:text-red-500/70'>
+						<Link to='/sign-up' className='text-red-500 hover:text-red-500/70'>
 							{' '}
 							Sign Up{' '}
 						</Link>

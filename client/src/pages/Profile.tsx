@@ -52,7 +52,7 @@ interface Model {
 }
 
 const Model = ({ cancel, proceed, type }: ModelProps) => (
-	<div className=' fixed top-0 left-0 right-0 h-screen z-50 flex justify-center items-center backdrop-blur-md bg-gray-900/10 dark:bg-gray-100/10'>
+	<div className=' fixed top-0 left-0 right-0 h-screen z-50 flex justify-center items-center backdrop-blur-md bg-gray-100/10 dark:bg-gray-900/10'>
 		<div className='p-10 max-w-lg bg-gray-100 dark:bg-gray-900 rounded-xl'>
 			<h1 className='text-red-500 font-bold text-center text-xl'>
 				Are you sure? <br className='md:hidden' /> you want to delete your

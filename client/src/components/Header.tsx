@@ -20,7 +20,7 @@ const LinkItem = ({ title, link, imgUrl }: LinkItemProps) => (
 	<li>
 		<Link
 			to={link}
-			className='text-black transition font-medium hover:text-gray-500/75 dark:text-white dark:hover:text-white/75'>
+			className='text-black transition font-medium hover:text-green-500 dark:text-white dark:hover:text-green-500'>
 			{imgUrl ? (
 				<img
 					src={imgUrl}
@@ -139,7 +139,7 @@ const Header = () => {
 					className={`px-4 md:hidden absolute top-[60px] right-0 left-0 rounded-xl z-10 py-4 ${
 						!navIsOpen ? '-translate-y-[100vh]' : 'translate-y-0'
 					} transition-all duration-500 `}>
-					<div className='rounded-xl p-4 bg-gray-900/10 dark:bg-white/5 shadow-xl flex flex-col gap-6 backdrop-blur-xl'>
+					<div className='rounded-xl p-4 bg-gray-900/10 dark:bg-white/10 shadow-xl flex flex-col gap-6 backdrop-blur-xl'>
 						<div className='sm:hidden'>
 							<SearchForm
 								searchTerm={searchTerm}
