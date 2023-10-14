@@ -118,7 +118,9 @@ export const getListings = async (
 				? { $in: [true, false] }
 				: true
 		const type =
-			req.query.type === undefined ? { $in: ['sale', 'rent'] } : req.query.type
+			req.query.type === undefined || req.query.type === 'all'
+				? { $in: ['sale', 'rent'] }
+				: req.query.type
 
 		const listings = await Listing.find({
 			name: { $regex: searchTerm, $options: 'i' },
