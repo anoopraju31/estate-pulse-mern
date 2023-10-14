@@ -200,7 +200,7 @@ const ListingPage = () => {
 							isFilterOpen ? 'translate-x-0' : '-translate-x-[100vw]'
 						} transition-all duration-500 lg:translate-x-0 `}>
 						{/* Filer Search */}
-						<aside className='p-4 bg-gray-800 rounded-lg'>
+						<aside className='p-4 bg-gray-100 dark:bg-gray-800 rounded-lg'>
 							<h3 className='mb-4 text-xl font-semibold text-center'>
 								Filters
 							</h3>
@@ -346,7 +346,7 @@ const ListingPage = () => {
 									disabled={isDisabled}
 									tabIndex={0}
 									aria-label='Clear Filters'
-									className='focus:outline-none disabled:cursor-not-allowed text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-4 w-full dark:bg-slate-600 dark:hover:bg-slate-700 dark:focus:ring-slate-800'>
+									className='focus:outline-none disabled:cursor-not-allowed dark:text-white bg-gray-300 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-4 w-full dark:bg-slate-600 dark:hover:bg-slate-700 dark:focus:ring-slate-800'>
 									Clear Filters
 								</button>
 
