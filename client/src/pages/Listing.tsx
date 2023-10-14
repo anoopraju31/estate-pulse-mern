@@ -207,7 +207,7 @@ const ListingPage = () => {
 
 							<form onSubmit={handleSubmit}>
 								{/* Search by name */}
-								<div className='relative'>
+								<div className='relative' role='search'>
 									<label htmlFor='search' className='sr-only'>
 										{' '}
 										Search for...{' '}
@@ -221,12 +221,15 @@ const ListingPage = () => {
 										placeholder='search'
 										value={filterData.searchTerm}
 										onChange={handleChange}
+										aria-label='Search'
+										aria-labelledby='search'
 										className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block !w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none'
 									/>
 
 									<span className='absolute inset-y-0 end-0 grid w-10 place-content-center'>
 										<button
 											type='button'
+											aria-label='Search'
 											className='text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'>
 											<span className='sr-only'>Search</span>
 
@@ -249,6 +252,7 @@ const ListingPage = () => {
 										value={filterData.type}
 										onChange={handleChange}
 										tabIndex={0}
+										aria-label='Type'
 										className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block !w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none'>
 										<option value='all'> All </option>
 										<option value='sale'> Sale </option>
@@ -257,68 +261,82 @@ const ListingPage = () => {
 								</div>
 
 								{/* Amenities */}
-								<div className='py-4 px-2'>
-									<p className='block mb-2 text-sm font-medium'> Amenities </p>
+								<div className='block py-4 px-2'>
+									<fieldset>
+										<legend className='block mb-2 text-sm font-medium'>
+											{' '}
+											Amenities{' '}
+										</legend>
 
-									{/* Offer */}
-									<div className='flex items-center mb-4'>
-										<input
-											id='offer'
-											name='offer'
-											type='checkbox'
-											checked={filterData.offer}
-											aria-checked={filterData.offer}
-											onChange={handleChange}
-											tabIndex={0}
-											className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-										/>
+										{/* Offer */}
+										<div className='flex items-center mb-4'>
+											<input
+												id='offer'
+												name='offer'
+												type='checkbox'
+												checked={filterData.offer}
+												aria-checked={filterData.offer}
+												onChange={handleChange}
+												tabIndex={0}
+												aria-label='Offer'
+												aria-describedby='offer-label'
+												className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+											/>
 
-										<label
-											htmlFor='offer'
-											className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
-											Offer
-										</label>
-									</div>
+											<label
+												htmlFor='offer'
+												id='offer-label'
+												className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
+												Offer
+											</label>
+										</div>
 
-									{/* parking */}
-									<div className='flex items-center mb-4'>
-										<input
-											id='parking'
-											name='parking'
-											type='checkbox'
-											checked={filterData.parking}
-											aria-checked={filterData.parking}
-											onChange={handleChange}
-											tabIndex={0}
-											className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-										/>
+										{/* parking */}
+										<div className='flex items-center mb-4'>
+											<input
+												id='parking'
+												name='parking'
+												type='checkbox'
+												checked={filterData.parking}
+												aria-checked={filterData.parking}
+												onChange={handleChange}
+												tabIndex={0}
+												aria-label='Parking Space'
+												aria-describedby='parking-label'
+												className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+											/>
 
-										<label
-											htmlFor='parking'
-											className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
-											Parking Space
-										</label>
-									</div>
+											<label
+												htmlFor='parking'
+												id='parking-label'
+												className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
+												Parking Space
+											</label>
+										</div>
 
-									{/* Furnished */}
-									<div className='flex items-center '>
-										<input
-											id='furnished'
-											name='furnished'
-											type='checkbox'
-											checked={filterData.furnished}
-											aria-checked={filterData.furnished}
-											onChange={handleChange}
-											tabIndex={0}
-											className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-										/>
+										{/* Furnished */}
+										<div className='flex items-center '>
+											<input
+												id='furnished'
+												name='furnished'
+												type='checkbox'
+												checked={filterData.furnished}
+												aria-checked={filterData.furnished}
+												onChange={handleChange}
+												tabIndex={0}
+												aria-label='Furnished'
+												aria-describedby='furnished-label'
+												className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+											/>
 
-										<label
-											htmlFor='furnished'
-											className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
-											Furnished
-										</label>
-									</div>
+											<label
+												htmlFor='furnished'
+												id='furnished-label'
+												className='ml-2 text-sm font-medium text-gray-900 dark:text-gray-300'>
+												Furnished
+											</label>
+										</div>
+									</fieldset>
 								</div>
 
 								{/* Clear Button */}
@@ -327,8 +345,9 @@ const ListingPage = () => {
 									onClick={handleClear}
 									disabled={isDisabled}
 									tabIndex={0}
+									aria-label='Clear Filters'
 									className='focus:outline-none disabled:cursor-not-allowed text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-4 w-full dark:bg-slate-600 dark:hover:bg-slate-700 dark:focus:ring-slate-800'>
-									Clear
+									Clear Filters
 								</button>
 
 								{/* Submit Button */}
@@ -336,8 +355,9 @@ const ListingPage = () => {
 									type='submit'
 									disabled={loading}
 									tabIndex={0}
+									aria-label='Filter Listings'
 									className='focus:outline-none disabled:cursor-not-allowed text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-4 w-full dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800'>
-									Search
+									Filter
 								</button>
 
 								{/* Close Filter Button */}
@@ -345,6 +365,7 @@ const ListingPage = () => {
 									type='button'
 									onClick={() => setIsFilerOpen(false)}
 									tabIndex={0}
+									aria-label='Close Filter Menu'
 									className='absolute top-3 right-3 lg:hidden text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-lg p-1.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800 dark:hover:bg-red-500'>
 									<AiOutlineClose />
 									<span className=' sr-only'> Close Filter Menu </span>
@@ -365,6 +386,7 @@ const ListingPage = () => {
 									ref={filterRef}
 									type='button'
 									onClick={() => setIsFilerOpen((prev) => !prev)}
+									aria-label='Toggle Filter'
 									className='block lg:hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 py-2.5 px-6 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none'>
 									Filter
 								</button>
@@ -379,6 +401,7 @@ const ListingPage = () => {
 										name='sort'
 										onChange={handleChange}
 										value={`${filterData.sort},${filterData.order}`}
+										aria-label='Sort by'
 										className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block !w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none'>
 										{sortValues.map(({ title, value }) => (
 											<option key={value} value={value}>
