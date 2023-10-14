@@ -99,7 +99,40 @@ export const getListings = async (
 	res: Response,
 	next: NextFunction,
 ) => {
-	res.json({
-		message: 'Api route is working',
-	})
+	try {
+		const limit: number = parseInt(req.query.limit as string) || 9
+		const startIndex: number = parseInt(req.query.startIndex as string) || 0
+		const searchTerm: string = (req.query.searchTerm as string) || ''
+		const sort: string = (req.query.sort as string) || 'createdAt'
+		const order = req.query.order === 'asc' ? 'asc' : 'desc'
+		const offer =
+			req.query.offer === undefined || req.query.offer === 'false'
+				? { $in: [true, false] }
+				: true
+		const furnished =
+			req.query.furnished === undefined || req.query.furnished === 'false'
+				? { $in: [true, false] }
+				: true
+		const parking =
+			req.query.parking === undefined || req.query.parking === 'false'
+				? { $in: [true, false] }
+				: true
+		const type =
+			req.query.type === undefined ? { $in: ['sale', 'rent'] } : req.query.type
+
+		const listings = await Listing.find({
+			name: { $regex: searchTerm, $options: 'i' },
+			offer,
+			furnished,
+			parking,
+			type,
+		})
+			.sort({ [sort]: order })
+			.limit(limit)
+			.skip(startIndex)
+
+		return res.status(200).json(listings)
+	} catch (error) {
+		next(error)
+	}
 }
