@@ -44,7 +44,7 @@ const Breadcrumb = () => {
 				</li>
 				{path?.map((item, idx) => (
 					<li key={idx} aria-current='page'>
-						{idx < path.length - 1 ? (
+						{idx < path.length - 1 && item.breadcrumbName !== 'edit' ? (
 							<Link
 								to={item.path}
 								className='flex items-center text-gray-500 md:ml-2 dark:text-gray-400'>
