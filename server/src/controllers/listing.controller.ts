@@ -93,3 +93,13 @@ export const updateListing = async (
 		next(error)
 	}
 }
+
+export const getListings = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	res.json({
+		message: 'Api route is working',
+	})
+}
