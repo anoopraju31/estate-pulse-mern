@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { MdLocationPin } from 'react-icons/md'
 import { IoMdShareAlt } from 'react-icons/io'
 import { FaBed, FaBath, FaParking, FaChair } from 'react-icons/fa'
@@ -12,6 +12,7 @@ const ListingDetailPage = () => {
 	const [listing, setListing] = useState<Listing | null>(null)
 	const [loading, setLoading] = useState<boolean>(true)
 	const params = useParams()
+	const navigate = useNavigate()
 
 	useEffect(() => {
 		const getListing = () => {
@@ -22,7 +23,7 @@ const ListingDetailPage = () => {
 				.then((data) => {
 					if (!data.success) {
 						setLoading(false)
-						return
+						navigate('/*')
 					}
 
 					setListing(data.listing)
@@ -36,7 +37,7 @@ const ListingDetailPage = () => {
 		}
 
 		getListing()
-	}, [params])
+	}, [params, navigate])
 
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText(window.location.href)
