@@ -27,6 +27,17 @@ const ListingCard = ({ listing, handleDelete }: ListingCardProps) => {
 		<article className='group relative w-full bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300  border border-gray-200 dark:border-gray-500 hover:shadow-lg transition-shadow overflow-hidden rounded-lg flex flex-col justify-between'>
 			<Link to={`/listing/${listing._id}`}>
 				<div className='flex flex-col'>
+					{/* Listing -type */}
+					<p
+						className={`${
+							listing?.type === 'sale'
+								? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+								: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+						} w-fit z-50 mb-1 text-xs font-medium px-2.5 py-0.5 rounded-full absolute top-2 left-2`}>
+						{' '}
+						{listing?.type === 'sale' ? 'Sale' : 'Rent'}{' '}
+					</p>
+
 					{/* Image */}
 					<figure className=''>
 						<img
@@ -36,7 +47,7 @@ const ListingCard = ({ listing, handleDelete }: ListingCardProps) => {
 									: 'https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/Sales_Blog/real-estate-business-compressor.jpg?width=595&height=400&name=real-estate-business-compressor.jpg'
 							}
 							alt={listing.name}
-							className='w-full aspect-video object-cover group-hover:scale-105 transition-scale duration-300'
+							className='w-full aspect-video overflow-hidden object-cover group-hover:scale-105 transition-scale duration-300'
 						/>
 					</figure>
 
