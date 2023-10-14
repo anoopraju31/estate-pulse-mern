@@ -4,6 +4,7 @@ import {
 	CreateListingPage,
 	EditListingPage,
 	EditProfilePage,
+	ErrorPage,
 	HomePage,
 	ListingDetailPage,
 	ListingPage,
@@ -34,6 +35,7 @@ const App = () => {
 					<Route path='/listing/create' element={<CreateListingPage />} />
 					<Route path='/listing/edit/:id' element={<EditListingPage />} />
 				</Route>
+				<Route path='*' element={<ErrorPage />} />
 			</Routes>
 
 			<Toaster position='top-center' />
